@@ -13,6 +13,7 @@
       ./packages.nix
       ./podman.nix
       ./systemd-initrd.nix
+      ./user.nix
       ./zsh.nix
     ];
 
