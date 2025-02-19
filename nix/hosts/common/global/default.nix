@@ -7,6 +7,7 @@
   imports =
   # TODO: implement autoupdate with hydra?
     [
+      ./boot.nix
       ./disko.nix
       ./locale.nix
       ./openssh.nix
