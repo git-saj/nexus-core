@@ -1,1 +1,1 @@
-{ "placeholder": "placeholder" }
+{"vault_addr":"http://172.26.0.10:8200","vault_token":"myroot"}
