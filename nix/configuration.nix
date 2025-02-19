@@ -1,18 +1,4 @@
 { modulesPath, lib, pkgs, sshPubKey, ... }:
-let
-  nixosVars = builtins.fromJSON (builtins.readFile ./nixos-vars.json);
-
-  vaultPubKey = pkgs.runCommand "vault-pubkey" {
-   	buildInputs = [ pkgs.vault ];
-   	VAULT_ADDR = nixosVars.vault_addr;
-   	VAULT_TOKEN = nixosVars.vault_token;
-  }
-
-  ''
-	vault login -method=token -no-store token=$VAULT_TOKEN
-	vault kv get -field=ssh_pubkey secret/bootstrap > $out
-  '';
-in
 {
   imports = [
     ./disk-config.nix
@@ -36,7 +22,7 @@ in
   ];
 
   users.users.root.openssh.authorizedKeys.keys = [
-    (builtins.readFile vaultPubKey)
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIf6QboK9ZCFTn7fmSywFWeg9gY620qvqG7g1xXKjoz1"
   ];
 
   system.stateVersion = "24.11";
