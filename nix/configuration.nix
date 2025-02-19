@@ -19,6 +19,7 @@ in
   ];
 
   nixpkgs.config.allowUnfree = true;
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   disko.devices.disk.main.device = "/dev/nvme0n1";
 
