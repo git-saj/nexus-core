@@ -15,7 +15,6 @@
       ./podman.nix
       ./systemd-initrd.nix
       ./user.nix
-      ./zsh.nix
     ];
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
