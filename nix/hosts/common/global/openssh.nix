@@ -12,8 +12,11 @@
     };
   };
 
-  security.pam.sshAgentAuth = {
-    enable = true;
-    authorizedKeysFiles = ["/etc/ssh/authorized_keys.d/%u"];
+  security = {
+    sudo.enable = true;
+    pam = {
+      sshAgentAuth.enable = true;
+      services.sudo.sshAgentAuth = true;
+    };
   };
 }
