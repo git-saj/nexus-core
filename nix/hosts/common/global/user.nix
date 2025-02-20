@@ -1,6 +1,6 @@
 { pkgs, ... }:
 {
-  users.users.s0010054j = {
+  users.users.root = {
     isNormalUser = true;
     extraGroups = [ "wheel" "docker" ];
     openssh.authorizedKeys.keys = [

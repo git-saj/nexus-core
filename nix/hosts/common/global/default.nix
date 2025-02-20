@@ -13,7 +13,6 @@
       ./openssh.nix
       ./packages.nix
       ./podman.nix
-      ./systemd-initrd.nix
       ./user.nix
     ];
 
