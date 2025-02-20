@@ -17,6 +17,6 @@ module "deploy" {
   install_user           = "root"
   target_host            = local.ipv4
   target_user            = "s0010054j"
-  instance_id            = 3
+  instance_id            = 4
   nixos_generate_config_path = "../nix/hosts/k8s002/hardware-configuration.nix"
 }
