@@ -14,7 +14,9 @@ module "deploy" {
 
   nixos_system_attr      = "../nix#nixosConfigurations.k8s002.config.system.build.toplevel"
   nixos_partitioner_attr = "../nix#nixosConfigurations.k8s002.config.system.build.diskoScript"
+  install_user = "root"
   target_host            = local.ipv4
+  target_user            = "s0010054j"
   instance_id            = 1
   nixos_generate_config_path = "../nix/hosts/k8s002/hardware-configuration.nix"
 }
