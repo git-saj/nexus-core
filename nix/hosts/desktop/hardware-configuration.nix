@@ -33,7 +33,7 @@
   swapDevices = [
     {
       device = "/swap/swapfile";
-      fsType = "vfat";
+      size = 8196;
     }
   ];
 

@@ -5,7 +5,7 @@
     inputs.hardware.nixosModules.common-cpu-amd
     inputs.hardware.nixosModules.common-gpu-nvidia
 
-    ./harware-configuration.nix
+    ./hardware-configuration.nix
 
     ../common/global
     ../common/users/s0010054j
@@ -18,7 +18,7 @@
   ];
 
   networking = {
-    hostname = "desktop";
+    hostName = "desktop";
     useDHCP = true;
   };
 

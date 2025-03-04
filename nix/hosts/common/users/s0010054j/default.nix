@@ -72,7 +72,7 @@ in
       protonvpn-gui
       terraform
       terraform-ls
-      vaul
+      vault
       vesktop
       vim
       wget
