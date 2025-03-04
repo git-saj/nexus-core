@@ -7,12 +7,10 @@
   imports =
   # TODO: implement autoupdate with hydra?
     [
-      ./boot.nix
-      ./disko.nix
+      ./docker.nix
       ./locale.nix
       ./openssh.nix
       ./packages.nix
-      ./podman.nix
       ./user.nix
     ];
 

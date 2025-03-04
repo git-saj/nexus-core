@@ -31,4 +31,6 @@ in
     text = builtins.readFile vaultPubKey;
     mode = "0444";
   };
+
+  system.stateVersion = "24.11";
 }
