@@ -53,7 +53,7 @@ in
       jq
       kubectl
       kubernetes-helm
-      librewolf
+      librewolf-bin
       logseq
       nh
       nil
