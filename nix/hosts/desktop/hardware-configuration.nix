@@ -40,7 +40,7 @@
   nixpkgs.hostPlatform = "x86_64-linux";
   hardware.cpu.amd.updateMicrocode = true;
   hardware.nvidia = {
-    open = false;
+    open = true;
     prime.offload.enable = false;
   };
 }
