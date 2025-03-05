@@ -3,9 +3,10 @@
   inputs,
   outputs,
   ...
-}: {
+}:
+{
   imports =
-  # TODO: implement autoupdate with hydra?
+    # TODO: implement autoupdate with hydra?
     [
       ./docker.nix
       ./locale.nix
@@ -14,15 +15,10 @@
       ./user.nix
     ];
 
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
-
-  nixpkgs = {
-    config = {
-      allowUnfree = true;
-    };
-  };
+  nix.settings.experimental-features = [
+    "nix-command"
+    "flakes"
+  ];
 
   hardware.enableRedistributableFirmware = true;
-
-  services.speechd.enable = false;
 }

@@ -4,6 +4,7 @@
   inputs = {
     # nix
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
+    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     systems.url = "github:nix-systems/default-linux";
     hardware.url = "github:nixos/nixos-hardware";
 
@@ -24,6 +25,7 @@
     {
       self,
       nixpkgs,
+      nixpkgs-unstable,
       systems,
       deploy-rs,
       ...
@@ -31,54 +33,60 @@
     let
       inherit (self) outputs;
       lib = nixpkgs.lib;
+
+      # Define the unstable overlay
+      overlay-unstable = final: prev: {
+        unstable = import nixpkgs-unstable {
+          inherit (prev) system;
+          config.allowUnfree = true;
+        };
+      };
+
+      # Define pkgsFor with the overlay applied
       forEachSystem = f: lib.genAttrs (import systems) (system: f pkgsFor.${system});
       pkgsFor = lib.genAttrs (import systems) (
         system:
         import nixpkgs {
           inherit system;
           config.allowUnfree = true;
+          config.permittedInsecurePackages = [
+            "electron-27.3.11"
+          ];
+          overlays = [ overlay-unstable ];
         }
       );
+
+      # Helper function to create a NixOS system with overlaid pkgs
+      mkSystem =
+        hostname: system:
+        nixpkgs.lib.nixosSystem {
+          inherit system;
+          modules = [
+            ./hosts/${hostname}
+            {
+              # Ensure the system uses our overlaid pkgs
+              nixpkgs.pkgs = pkgsFor.${system};
+            }
+          ];
+          specialArgs = {
+            inherit inputs outputs;
+          };
+        };
     in
     {
       inherit lib;
+
       nixosConfigurations = {
-        # # k8s-home-prod-001
-        # k8s001 = nixpkgs.lib.nixosSystem {
-        #   modules = [ ./hosts/k8s001 ];
-        #   specialArgs = {
-        #     inherit inputs outputs;
-        #   };
-        # };
         # bootstrap
-        bootstrap = nixpkgs.lib.nixosSystem {
-          modules = [ ./hosts/bootstrap ];
-          specialArgs = {
-            inherit inputs outputs;
-          };
-        };
+        bootstrap = mkSystem "bootstrap" "x86_64-linux"; # Adjust system as needed
         # desktop
-        desktop = nixpkgs.lib.nixosSystem {
-          modules = [ ./hosts/desktop ];
-          specialArgs = {
-            inherit inputs outputs;
-          };
-        };
+        desktop = mkSystem "desktop" "x86_64-linux"; # Adjust system as needed
         # k8s-home-prod-002
-        k8s002 = nixpkgs.lib.nixosSystem {
-          modules = [ ./hosts/k8s002 ];
-          specialArgs = {
-            inherit inputs outputs;
-          };
-        };
+        k8s002 = mkSystem "k8s002" "x86_64-linux"; # Adjust system as needed
         # k8s-home-prod-003
-        k8s003 = nixpkgs.lib.nixosSystem {
-          modules = [ ./hosts/k8s003 ];
-          specialArgs = {
-            inherit inputs outputs;
-          };
-        };
+        k8s003 = mkSystem "k8s003" "aarch64-linux"; # Adjust system as needed
       };
+
       deploy.nodes.k8s002 = {
         hostname = "k8s-home-prod-002.int.sajbox.net";
         fastConnection = true;

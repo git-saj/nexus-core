@@ -32,11 +32,15 @@
 
   swapDevices = [
     {
-      device = "/swap/swapfile";
+      device = "/swapfile";
       size = 8196;
     }
   ];
 
   nixpkgs.hostPlatform = "x86_64-linux";
   hardware.cpu.amd.updateMicrocode = true;
+  hardware.nvidia = {
+    open = false;
+    prime.offload.enable = false;
+  };
 }
