@@ -41,6 +41,7 @@
   hardware.cpu.amd.updateMicrocode = true;
   hardware.nvidia = {
     open = true;
+    powerManagement.enable = true;
     prime.offload.enable = false;
   };
 }
