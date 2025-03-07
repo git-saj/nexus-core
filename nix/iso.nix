@@ -1,15 +1,17 @@
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 let
-  vaultPubKey = pkgs.runCommand "vault-pubkey" {
-   	buildInputs = [ pkgs.vault ];
-   	VAULT_ADDR = builtins.getEnv "VAULT_ADDR";
-   	VAULT_TOKEN = builtins.getEnv "VAULT_TOKEN";
-  }
+  vaultPubKey =
+    pkgs.runCommand "vault-pubkey"
+      {
+        buildInputs = [ pkgs.vault ];
+        VAULT_ADDR = builtins.getEnv "VAULT_ADDR";
+        VAULT_TOKEN = builtins.getEnv "VAULT_TOKEN";
+      }
 
-  ''
-	vault login -method=token -no-store token=$VAULT_TOKEN
-	vault kv get -field=ssh_pubkey secret/bootstrap > $out
-  '';
+      ''
+        	vault login -method=token -no-store token=$VAULT_TOKEN
+        	vault kv get -field=ssh_pubkey secret/bootstrap > $out
+      '';
 
 in
 {
