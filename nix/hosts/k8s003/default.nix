@@ -1,4 +1,5 @@
-{ inputs, ... }: {
+{ ... }:
+{
   imports = [
     ../common/global
     ../common/optional/rpi.nix

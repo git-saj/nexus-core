@@ -28,6 +28,7 @@ in
       PermitRootLogin = "yes";
     };
   };
+  # this is a comment
 
   environment.etc."ssh/authorized_keys" = {
     text = builtins.readFile vaultPubKey;
