@@ -67,8 +67,7 @@ in
       vim
       vlc
       wget
-      zed-editor
-      unstable.claude-code
+      unstable.zed-editor
       unstable.package-version-server
     ];
   };

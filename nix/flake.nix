@@ -43,7 +43,6 @@
       };
 
       # Define pkgsFor with the overlay applied
-      forEachSystem = f: lib.genAttrs (import systems) (system: f pkgsFor.${system});
       pkgsFor = lib.genAttrs (import systems) (
         system:
         import nixpkgs {
