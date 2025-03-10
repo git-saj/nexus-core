@@ -1,2 +1,3 @@
 # ignore nix-build result directory
-result/
+result*
+.direnv

@@ -85,9 +85,14 @@
             inherit inputs outputs;
           };
         };
+
+      # Helper function to create devShells for each system
+      forEachSystem = f: lib.genAttrs (import systems) (system: f pkgsFor.${system});
     in
     {
       inherit lib;
+
+      devShells = forEachSystem (pkgs: import ./shell.nix { inherit pkgs; });
 
       nixosConfigurations = {
         # bootstrap

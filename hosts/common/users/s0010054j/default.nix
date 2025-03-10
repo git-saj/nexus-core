@@ -20,6 +20,7 @@ in
   services.displayManager.autoLogin.user = "s0010054j";
 
   programs.firefox.enable = true;
+  programs.direnv.enable = true;
 
   nix.settings.experimental-features = [
     "nix-command"
@@ -48,21 +49,9 @@ in
       devpod
       ghostty
       git
-      go
-      gopls
-      jq
-      kubectl
-      kubernetes-helm
       librewolf-bin
       logseq
-      nh
-      nil
-      nixfmt-rfc-style
       obsidian
-      protonvpn-gui
-      terraform
-      terraform-ls
-      vault
       vesktop
       vim
       vlc
