@@ -44,7 +44,7 @@
     ...
   } @ inputs: let
     inherit (self) outputs;
-    lib = nixpkgs.lib;
+    inherit (nixpkgs) lib;
 
     # Define the unstable overlay
     overlay-unstable = final: prev: {
