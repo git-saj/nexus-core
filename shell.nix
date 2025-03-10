@@ -15,7 +15,6 @@
       terraform
       terraform-ls
       kubernetes-helm
-      kubectl
 
       # Other useful tools for your NixOS configuration
       alejandra # Nix code formatter
