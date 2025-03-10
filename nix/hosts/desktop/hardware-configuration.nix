@@ -30,12 +30,18 @@
     fsType = "vfat";
   };
 
+  # 8GB swap
   swapDevices = [
     {
       device = "/swapfile";
       size = 8196;
     }
   ];
+  # 32GB zram
+  zramSwap = {
+    enable = true;
+    memoryMax = 32 * 1024 * 1024 * 1024;
+  };
 
   nixpkgs.hostPlatform = "x86_64-linux";
   hardware.cpu.amd.updateMicrocode = true;

@@ -1,12 +1,26 @@
 {
   description = "nexus-core nixos configuration";
 
+  nixConfig = {
+    extra-substituters = [
+      "https://nix-community.cachix.org"
+      "https://nix-gaming.cachix.org"
+    ];
+    extra-trusted-public-keys = [
+      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+      "nix-gaming.cachix.org-1:nbjlureqMbRAxR1gJ/f3hxemL9svXaZF/Ees8vCUUs4="
+    ];
+  };
+
   inputs = {
     # nix
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     systems.url = "github:nix-systems/default-linux";
     hardware.url = "github:nixos/nixos-hardware";
+
+    # nix-gaming
+    nix-gaming.url = "github:fufexan/nix-gaming";
 
     # disko
     disko = {

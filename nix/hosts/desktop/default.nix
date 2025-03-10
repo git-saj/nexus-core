@@ -11,6 +11,7 @@
     ../common/users/s0010054j
 
     ../common/optional/pipewire.nix
+    ../common/optional/starcitizen.nix
   ];
 
   environment.systemPackages = with pkgs; [
