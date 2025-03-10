@@ -14,7 +14,6 @@
       deploy-rs
       terraform
       terraform-ls
-      kubectl
       kubernetes-helm
 
       # Other useful tools for your NixOS configuration
