@@ -137,8 +137,10 @@
           inputs.deploy-rs.defaultPackage.${system}
           terraform
           terraform-ls
+          terramate
           kubernetes-helm
           kubectl
+          jq
 
           # Other useful tools for your NixOS configuration
           alejandra # Nix code formatter

@@ -1,4 +1,4 @@
-{inputs, ...}: {
+{terraform, ...}: {
   imports = [
     ../common/global
     ../common/optional/boot.nix
@@ -7,7 +7,7 @@
     ./hardware-configuration.nix
   ];
 
-  disko.devices.disk.main.device = "/dev/nvme0n1";
+  disko.devices.disk.main.device = terraform.disko_main_device;
 
   networking = {
     # TODO: do i need to add domain or will dhcp handle this?
