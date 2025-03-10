@@ -1,11 +1,14 @@
-{ pkgs, inputs, ... }:
 {
+  pkgs,
+  inputs,
+  ...
+}: {
   environment.systemPackages = [
     (inputs.nix-gaming.packages.${pkgs.system}.star-citizen.override {
       disableEac = false;
       useUmu = true;
       gamescope = pkgs.gamescope.overrideAttrs (_: {
-        NIX_CFLAGS_COMPILE = [ "-fno-fast-math" ];
+        NIX_CFLAGS_COMPILE = ["-fno-fast-math"];
       });
       gameScopeEnable = true;
       gameScopeArgs = [

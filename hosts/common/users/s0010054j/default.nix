@@ -2,12 +2,9 @@
   pkgs,
   config,
   ...
-}:
-let
+}: let
   ifTheyExist = groups: builtins.filter (group: builtins.hasAttr group config.users.groups) groups;
-in
-{
-
+in {
   services.xserver.enable = true;
   services.displayManager.sddm.enable = true;
   services.desktopManager.plasma6.enable = true;
@@ -33,7 +30,7 @@ in
 
   security.pam.services.sddm.enableKwallet = true;
 
-  boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
+  boot.binfmt.emulatedSystems = ["aarch64-linux"];
 
   virtualisation.docker.enable = true;
   programs.ssh.startAgent = true;

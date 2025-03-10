@@ -42,5 +42,5 @@
     };
   };
   # https://github.com/NixOS/nixpkgs/issues/263359
-  networking.firewall.trustedInterfaces = [ "lxdbr0" ];
+  networking.firewall.trustedInterfaces = ["lxdbr0"];
 }

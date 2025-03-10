@@ -1,4 +1,10 @@
-{ pkgs, config, lib, inputs, ... }: {
+{
+  pkgs,
+  config,
+  lib,
+  inputs,
+  ...
+}: {
   imports = [
     inputs.hardware.nixosModules.common-gpu-nvidia
   ];

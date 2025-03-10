@@ -3,8 +3,7 @@
   inputs,
   outputs,
   ...
-}:
-{
+}: {
   imports =
     # TODO: implement autoupdate with hydra?
     [

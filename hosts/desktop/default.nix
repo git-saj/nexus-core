@@ -1,5 +1,8 @@
-{ pkgs, inputs, ... }:
 {
+  pkgs,
+  inputs,
+  ...
+}: {
   imports = [
     inputs.hardware.nixosModules.common-pc-ssd
     inputs.hardware.nixosModules.common-cpu-amd

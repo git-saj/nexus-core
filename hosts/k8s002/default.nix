@@ -1,4 +1,4 @@
-{ inputs, ... }: {
+{inputs, ...}: {
   imports = [
     ../common/global
     ../common/optional/nvidia.nix
