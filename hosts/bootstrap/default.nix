@@ -11,7 +11,7 @@
 
   networking = {
     # TODO: do i need to add domain or will dhcp handle this?
-    hostName = "bootstrap";
+    hostName = terraform.hostname;
     useDHCP = true;
     usePredictableInterfaceNames = false;
   };
