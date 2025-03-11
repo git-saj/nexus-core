@@ -11,10 +11,10 @@
   disko.devices.disk.main.device = "/dev/nvme0n1";
 
   networking = {
-    # TODO: do i need to add domain or will dhcp handle this?
     hostName = "k8s-home-prod-002";
     useDHCP = true;
     firewall.enable = false;
+    usePredictableInterfaceNames = false;
   };
 
   system.stateVersion = "24.11";

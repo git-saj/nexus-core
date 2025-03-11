@@ -13,6 +13,7 @@
     # TODO: do i need to add domain or will dhcp handle this?
     hostName = "bootstrap";
     useDHCP = true;
+    usePredictableInterfaceNames = false;
   };
 
   system.stateVersion = "24.11";
