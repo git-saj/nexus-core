@@ -16,7 +16,6 @@ spec:
     service:
       annotations:
         consul.hashicorp.com/service-sync: "true"
-        consul.hashicorp.com/service-name: "traefik-system-ingress"
     additionalArguments:
       - "--providers.consulcatalog=true"
       - "--providers.consulcatalog.endpoint.address=consul-nexus-server.consul-system.svc.cluster.local:8500"
