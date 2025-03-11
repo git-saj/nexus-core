@@ -27,7 +27,7 @@ spec:
         limits:
           cpu: 1000m
           memory: 1024Mi
-      annotations:
+      annotations: |
         consul.hashicorp.com/connect-inject: "true"
         consul.hashicorp.com/connect-service: "consul-ui"
     connectInject:
