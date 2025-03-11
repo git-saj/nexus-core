@@ -8,16 +8,12 @@ spec:
     spec:
       version: ">=34.4.1"
   values:
-    providers:
-      kubernetesIngress:
-        enabled: true # Enable Ingress controller functionality
-      consulCatalog:
-        enabled: true
-        endpoint:
-          address: "consul-nexus-server.consul.svc.cluster.local:8500" # Consul server address
-          scheme: "http" # Use "https" if Consul is TLS-enabled
-        exposedByDefault: false # Only expose services with traefik.enable=true
-        defaultRule: "Host(`{{ .Name }}.example.com`)" # Customize domain as needed
+    additionalArguments:
+      - "--providers.consulcatalog=true"
+      - "--providers.consulcatalog.endpoint.address=consul-nexus-server.consul.svc.cluster.local:8500"
+      - "--providers.consulcatalog.exposedByDefault=false"
+      - "--providers.consulcatalog.connectAware=true"
+      - "--providers.consulcatalog.connectByDefault=true"
     service:
       type: LoadBalancer
       spec:
