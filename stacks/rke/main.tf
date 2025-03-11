@@ -6,6 +6,10 @@ resource "rke_cluster" "nexus" {
   enable_cri_dockerd = true
   ssh_agent_auth     = true
 
+  network {
+    plugin = "calico"
+  }
+
   dynamic "nodes" {
     for_each = local.nodes
 
@@ -15,6 +19,24 @@ resource "rke_cluster" "nexus" {
       role    = nodes.value["roles"]
     }
   }
+
+  authentication {
+    sans = [
+      "k8s-home-prod.int.sajbox.net",
+      "192.168.10.10"
+    ]
+  }
+
+  ingress {
+    provider = "none"
+  }
+
+  addons_include = [
+    "https://kube-vip.io/manifests/rbac.yaml",
+    "./manifests/kube-vip-pod.yaml",
+    "https://raw.githubusercontent.com/kube-vip/kube-vip-cloud-provider/main/manifest/kube-vip-cloud-controller.yaml",
+    "./manifests/kube-vip-cm.yaml"
+  ]
 }
 
 # create a local file containing the kubeconfig
