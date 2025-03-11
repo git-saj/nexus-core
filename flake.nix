@@ -142,6 +142,7 @@
           kubectl
           jq
           gh
+          fluxcd
 
           # Other useful tools for your NixOS configuration
           alejandra # Nix code formatter
