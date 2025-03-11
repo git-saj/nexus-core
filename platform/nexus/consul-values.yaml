@@ -12,12 +12,9 @@ spec:
       name: consul-nexus
     ui:
       service:
-        annotations:
+        annotations: |
           consul.hashicorp.com/connect-inject: "true"
-          consul.hashicorp.com/service-tags: "\
-            traefik.enable=true,\
-            traefik.http.routers.podinfo.entrypoints=websecure,\
-            traefik.http.routers.podinfo.rule=Host(`consul.int.sajbox.com`)"
+          consul.hashicorp.com/service-tags: "traefik.enable=true,traefik.http.routers.consul-ui.entrypoints=websecure,traefik.http.routers.consul-ui.rule=Host(`consul.int.sajbox.com`)"
     server:
       enabled: true
       replicas: 1
