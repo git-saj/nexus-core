@@ -1,11 +1,12 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: consul
-  namespace: consul
+  name: traefik
+  namespace: traefik-system
 spec:
   chart:
-    version: ">=34.4.1"
+    spec:
+      version: ">=34.4.1"
   values:
     providers:
       kubernetesIngress:
