@@ -10,6 +10,9 @@ spec:
   values:
     global:
       name: consul-nexus
+    connectInject:
+      enabled: true
+      default: true
     server:
       enabled: true
       replicas: 1
