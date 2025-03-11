@@ -10,6 +10,8 @@ spec:
   values:
     global:
       name: consul-nexus
+      metrics:
+        enabled: true
     server:
       enabled: true
       replicas: 1
