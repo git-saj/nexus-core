@@ -18,6 +18,7 @@ spec:
         consul.hashicorp.com/service-sync: "true"
     additionalArguments:
       - "--providers.consulcatalog=true"
+      - "--providers.consulcatalog.defaultRule=Host(`{{ .Name }}.saj.sh`)"
       - "--providers.consulcatalog.endpoint.address=consul-nexus-server.consul-system.svc.cluster.local:8500"
       - "--providers.consulcatalog.endpoint.scheme=http"
       - "--providers.consulcatalog.exposedByDefault=false"

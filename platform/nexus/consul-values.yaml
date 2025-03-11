@@ -10,12 +10,6 @@ spec:
   values:
     global:
       name: consul-nexus
-    ui:
-      service:
-        annotations: |
-          consul.hashicorp.com/service-sync: "true"  # Sync UI service to Consul catalog
-          consul.hashicorp.com/service-name: "consul-ui"  # Unique name in Consul
-          consul.hashicorp.com/service-tags: "traefik.enable=true,traefik.http.routers.consul-ui.entrypoints=websecure,traefik.http.routers.consul-ui.rule=Host(`consul.int.sajbox.com`)"
     server:
       enabled: true
       replicas: 1
@@ -27,9 +21,6 @@ spec:
         limits:
           cpu: 1000m
           memory: 1024Mi
-      annotations: |
-        consul.hashicorp.com/connect-inject: "true"
-        consul.hashicorp.com/connect-service: "consul-ui"
     connectInject:
       enabled: true
       default: false
