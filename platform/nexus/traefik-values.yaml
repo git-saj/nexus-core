@@ -11,10 +11,12 @@ spec:
     ingressRoute:
       dashboard:
         enabled: true
+      matchRule: Host(`traefik.sajbox.com`)
+      entryPoints: ["websecure"]
     service:
-      type: LoadBalancer
-      spec:
-        externalTrafficPolicy: Local
+      annotations:
+        consul.hashicorp.com/service-sync: "true"
+        consul.hashicorp.com/service-name: "traefik-system-ingress"
     additionalArguments:
       - "--providers.consulcatalog=true"
       - "--providers.consulcatalog.endpoint.address=consul-nexus-server.consul-system.svc.cluster.local:8500"
@@ -22,3 +24,4 @@ spec:
       - "--providers.consulcatalog.exposedByDefault=false"
       - "--providers.consulcatalog.connectAware=true"
       - "--providers.consulcatalog.connectByDefault=true"
+      - "--providers.consulcatalog.servicename=traefik-system-ingress"

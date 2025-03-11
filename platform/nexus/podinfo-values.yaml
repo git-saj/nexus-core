@@ -1,0 +1,16 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: podinfo
+  namespace: podinfo
+spec:
+  chart:
+    spec:
+      version: ">=6.8.0"
+  values:
+    podAnnotations:
+      consul.hashicorp.com/connect-inject: "true"
+      consul.hashicorp.com/service-tags: "\
+        traefik.enable=true,\
+        traefik.http.routers.podinfo.entrypoints=websecure,\
+        traefik.http.routers.podinfo.rule=Host(`podinfo.saj.sh`)"

@@ -23,9 +23,9 @@ spec:
           memory: 1024Mi
     connectInject:
       enabled: true
-      default: true
+      default: false
     syncCatalog:
       enabled: true
-      default: true
+      default: false
       toConsul: true
       toK8S: false
