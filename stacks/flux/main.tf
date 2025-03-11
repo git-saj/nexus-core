@@ -7,6 +7,7 @@ provider "flux" {
     client_certificate           = var.rke_client_cert
     client_key                   = var.rke_client_key
     client_certificate_authority = var.rke_ca_crt
+    insecure                     = true
   }
   git = {
     url    = "ssh://git@github.com/git-saj/nexus-core.git"
