@@ -23,10 +23,10 @@ resource "tls_private_key" "this" {
 }
 
 resource "github_repository_deploy_key" "this" {
-  repository = "nexus-core"
   title      = "flux-bootstrap"
+  repository = "nexus-core"
   key        = tls_private_key.this.public_key_openssh
-  read_only  = true
+  read_only  = false
 }
 
 resource "flux_bootstrap_git" "this" {
