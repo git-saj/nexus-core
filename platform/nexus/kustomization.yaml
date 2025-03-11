@@ -8,6 +8,8 @@ patches:
   - path: consul-values.yaml
     target:
       kind: HelmRelease
+      name: consul
   - path: traefik-values.yaml
     target:
       kind: HelmRelease
+      name: traefik
