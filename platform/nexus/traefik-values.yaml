@@ -17,6 +17,8 @@ spec:
         externalTrafficPolicy: Local
     additionalArguments:
       - "--providers.consulcatalog=true"
-      - "--providers.consulcatalog.endpoint.address=consul-nexus-server.consul.svc.cluster.local:8500"
+      - "--providers.consulcatalog.endpoint.address=consul-nexus-server.consul-system.svc.cluster.local:8500"
+      - "--providers.consulcatalog.endpoint.scheme=http"
       - "--providers.consulcatalog.exposedByDefault=false"
       - "--providers.consulcatalog.connectAware=true"
+      - "--providers.consulcatalog.connectByDefault=true"
