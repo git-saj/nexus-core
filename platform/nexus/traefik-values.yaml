@@ -1,14 +1,23 @@
-providers:
-  kubernetesIngress:
-    enabled: true # Enable Ingress controller functionality
-  consulCatalog:
-    enabled: true
-    endpoint:
-      address: "consul-nexus-server.consul.svc.cluster.local:8500" # Consul server address
-      scheme: "http" # Use "https" if Consul is TLS-enabled
-    exposedByDefault: false # Only expose services with traefik.enable=true
-    defaultRule: "Host(`{{ .Name }}.example.com`)" # Customize domain as needed
-service:
-  type: LoadBalancer
-  spec:
-    externalTrafficPolicy: Local
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: consul
+  namespace: consul
+spec:
+  chart:
+    version: ">=34.4.1"
+  values:
+    providers:
+      kubernetesIngress:
+        enabled: true # Enable Ingress controller functionality
+      consulCatalog:
+        enabled: true
+        endpoint:
+          address: "consul-nexus-server.consul.svc.cluster.local:8500" # Consul server address
+          scheme: "http" # Use "https" if Consul is TLS-enabled
+        exposedByDefault: false # Only expose services with traefik.enable=true
+        defaultRule: "Host(`{{ .Name }}.example.com`)" # Customize domain as needed
+    service:
+      type: LoadBalancer
+      spec:
+        externalTrafficPolicy: Local
