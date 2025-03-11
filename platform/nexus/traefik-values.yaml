@@ -8,13 +8,15 @@ spec:
     spec:
       version: ">=34.4.1"
   values:
+    ingressRoute:
+      dashboard:
+        enabled: true
+    service:
+      type: LoadBalancer
+      spec:
+        externalTrafficPolicy: Local
     additionalArguments:
       - "--providers.consulcatalog=true"
       - "--providers.consulcatalog.endpoint.address=consul-nexus-server.consul.svc.cluster.local:8500"
       - "--providers.consulcatalog.exposedByDefault=false"
       - "--providers.consulcatalog.connectAware=true"
-      - "--providers.consulcatalog.connectByDefault=true"
-    service:
-      type: LoadBalancer
-      spec:
-        externalTrafficPolicy: Local
