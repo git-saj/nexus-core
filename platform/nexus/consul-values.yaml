@@ -31,3 +31,5 @@ spec:
       default: false
       toConsul: true
       toK8S: false
+    prometheus:
+      enabled: true
