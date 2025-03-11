@@ -131,7 +131,6 @@
         buildInputs = with pkgs; [
           # Essential NixOS development tools
           git
-          nixfmt-rfc-style
           nil # Nix language server
           nh
           inputs.deploy-rs.defaultPackage.${system}

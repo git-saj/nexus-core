@@ -15,7 +15,6 @@ module "bootstrap" {
 
   special_args = {
     terraform = {
-      hostname          = split(".", each.key)[0]
       disko_main_device = each.value.nixos_anywhere.disko_main_device
     }
   }
