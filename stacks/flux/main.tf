@@ -25,7 +25,7 @@ resource "tls_private_key" "this" {
 resource "github_repository_deploy_key" "this" {
   repository = "nexus-core"
   title      = "flux-bootstrap"
-  key        = tls_private_key.this.private_key_pem
+  key        = tls_private_key.this.public_key_openssh
   read_only  = true
 }
 
