@@ -4,12 +4,14 @@ globals {
 
   # global provider versions used across all stacks (stacks can override these)
   provider_versions = {
-    rke = "1.7.0"
+    rke  = "1.7.0"
+    flux = "1.5.1"
+    github = "6.6.0"
   }
 
   nodes = {
     "k8s-home-prod-002.int.sajbox.net" = {
-      name = "k8s002"
+      name  = "k8s002"
       roles = ["controlplane", "worker", "etcd"]
       nixos_anywhere = {
         enable            = true
@@ -18,7 +20,7 @@ globals {
       }
     }
     "k8s-home-prod-003.int.sajbox.net" = {
-      name = "k8s003"
+      name  = "k8s003"
       roles = ["controlplane", "etcd"]
       nixos_anywhere = {
         enable = false

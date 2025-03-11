@@ -139,8 +139,10 @@
           terraform-ls
           terramate
           kubernetes-helm
+          helm-ls
           kubectl
           jq
+          gh
 
           # Other useful tools for your NixOS configuration
           alejandra # Nix code formatter
