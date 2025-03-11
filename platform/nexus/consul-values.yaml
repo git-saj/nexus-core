@@ -10,8 +10,6 @@ spec:
   values:
     global:
       name: consul-nexus
-    client:
-      enabled: true
     server:
       enabled: true
       replicas: 1
