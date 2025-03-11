@@ -12,7 +12,7 @@ spec:
       name: consul-nexus
     server:
       enabled: true
-      replicas: 2
+      replicas: 1
       storageClass: local-path
       resources:
         requests:
