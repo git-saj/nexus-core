@@ -143,7 +143,7 @@
           jq
           gh
           fluxcd
-
+          tree
           # Other useful tools for your NixOS configuration
           alejandra # Nix code formatter
           statix # Lints and suggestions for the Nix programming language

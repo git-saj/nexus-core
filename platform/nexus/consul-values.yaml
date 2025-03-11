@@ -10,3 +10,14 @@ spec:
   values:
     global:
       name: consul-nexus
+    server:
+      enabled: true
+      replicas: 2
+      storageClass: local-path
+      resources:
+        requests:
+          cpu: 500m
+          memory: 512Mi
+        limits:
+          cpu: 1000m
+          memory: 1024Mi
