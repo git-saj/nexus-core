@@ -1,3 +1,6 @@
+# kubeconfig
+kubeconfig.yaml
+
 # ignore nix-build result directory
 result*
 .direnv

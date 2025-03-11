@@ -16,3 +16,9 @@ resource "rke_cluster" "nexus" {
     }
   }
 }
+
+# create a local file containing the kubeconfig
+resource "local_file" "kubeconfig" {
+  content  = rke_cluster.nexus.kube_config_yaml
+  filename = "kubeconfig.yaml"
+}
