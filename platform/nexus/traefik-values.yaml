@@ -13,6 +13,10 @@ spec:
         enabled: true
         matchRule: Host(`traefik.sajbox.com`)
         entryPoints: ["websecure-int"]
+    service:
+      additionalServices:
+        internal:
+          consul.hashicorp.com/service-ignored: "true"
     ports:
       websecure-int:
         port: 9443
