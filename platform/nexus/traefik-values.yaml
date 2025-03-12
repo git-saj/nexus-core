@@ -12,7 +12,7 @@ spec:
       dashboard:
         enabled: true
         matchRule: Host(`traefik.sajbox.com`)
-        entryPoints: ["websecure-internal"]
+        entryPoints: ["websecure-int"]
     service:
       annotations:
         consul.hashicorp.com/service-sync: "true"
