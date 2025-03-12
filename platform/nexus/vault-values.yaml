@@ -27,5 +27,19 @@ spec:
           traefik.ingress.kubernetes.io/router.entrypoints: websecure-int
       ha:
         enabled: true
+        config: |
+          ui = true
+
+          listener "tcp" {
+            tls_disable = 1
+            address = "[::]:8200"
+            cluster_address = "[::]:8201"
+          }
+          storage "consul" {
+            path = "vault"
+            address = "HOST_IP:8501"
+            scheme = "https"
+            tls_skip_verify = "true"
+          }
     csi:
       enabled: true
