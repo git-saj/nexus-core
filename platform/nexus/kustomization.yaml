@@ -12,6 +12,10 @@ patches:
     target:
       kind: HelmRelease
       name: consul
+  - path: vault-values.yaml
+    target:
+      kind: HelmRelease
+      name: vault
   - path: traefik-values.yaml
     target:
       kind: HelmRelease
