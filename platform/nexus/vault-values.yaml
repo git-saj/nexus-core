@@ -9,6 +9,7 @@ spec:
       version: ">=0.29.1"
   values:
     global:
+      enabled: true
       resources:
         requests:
           memory: 256Mi
@@ -19,4 +20,6 @@ spec:
     server:
       affinity: ""
       ha:
+        enabled: true
+      ui:
         enabled: true
