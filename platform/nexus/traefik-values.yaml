@@ -7,6 +7,9 @@ spec:
   chart:
     spec:
       version: ">=34.4.1"
+  dependsOn:
+    - name: consul
+      namespace: consul-system
   values:
     ingressRoute:
       dashboard:
