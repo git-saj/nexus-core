@@ -1,0 +1,12 @@
+apiVersion: secrets.hashicorp.com/v1beta1
+kind: VaultStaticSecret
+metadata:
+  name: vault-kv-app
+spec:
+  type: kv-v2
+  mount: kvv2
+  path: nexus/cloudflare/tunnel
+  destination:
+    name: secretkv
+    create: true
+  refreshAfter: 30s
