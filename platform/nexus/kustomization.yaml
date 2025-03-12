@@ -16,6 +16,10 @@ patches:
     target:
       kind: HelmRelease
       name: vault
+  - path: vault-secrets-operator-values.yaml
+    target:
+      kind: HelmRelease
+      name: vault-secrets-operator
   - path: traefik-values.yaml
     target:
       kind: HelmRelease
