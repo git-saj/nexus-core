@@ -12,6 +12,8 @@ spec:
       name: consul-nexus
       metrics:
         enabled: true
+    client:
+      enabled: true
     server:
       enabled: true
       replicas: 1
