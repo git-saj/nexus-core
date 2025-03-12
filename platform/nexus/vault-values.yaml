@@ -26,5 +26,5 @@ spec:
         consul.hashicorp.com/connect-service: "vault-active"
         consul.hashicorp.com/service-tags: "\
           traefik.enable=true,\
-          traefik.http.routers.vault.entrypoints=web,\
+          traefik.http.routers.vault.entrypoints=websecure,\
           traefik.http.routers.vault.rule=Host(`vault.saj.sh`)"
