@@ -36,6 +36,7 @@ spec:
           - host: consul.sajbox.com
         annotations: |
           traefik.ingress.kubernetes.io/router.entrypoints: websecure-int
+          traefik.ingress.kubernetes.io/router.tls.passthrough: "true"
     connectInject:
       enabled: true
       default: false
