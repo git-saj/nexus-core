@@ -16,7 +16,7 @@ spec:
     service:
       additionalServices:
         internal:
-          annotations:
+          label:
             consul.hashicorp.com/service-ignore: "true"
     ports:
       websecure-int:
