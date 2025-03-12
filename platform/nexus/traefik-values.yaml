@@ -16,7 +16,7 @@ spec:
     service:
       additionalServices:
         internal:
-          consul.hashicorp.com/service-ignored: "true"
+          consul.hashicorp.com/service-ignore: "true"
     ports:
       websecure-int:
         port: 9443
