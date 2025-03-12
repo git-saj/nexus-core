@@ -27,12 +27,12 @@ spec:
           memory: 1024Mi
     ui:
       enabled: true
-      service:
+      ingress:
         enabled: true
-        type: ClusterIP
-        annotations: |
-          consul.hashicorp.com/service-sync: "true"
-          consul.hashicorp.com/service-tags: "traefik.enable=true,traefik.http.routers.consul-ui.entrypoints=websecure-int,traefik.http.routers.consul-ui.rule=Host(`consul.sajbox.com`)"
+        hosts:
+          - consul.sajbox.com
+        annotations:
+          traefik.ingress.kubernetes.io/router.entrypoints: websecure-int
     connectInject:
       enabled: true
       default: false
