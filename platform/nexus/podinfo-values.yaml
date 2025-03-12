@@ -9,7 +9,6 @@ spec:
       version: ">=6.8.0"
   values:
     podAnnotations:
-      consul.hashicorp.com/connect-inject: "true"
       consul.hashicorp.com/service-tags: "\
         traefik.enable=true,\
         traefik.http.routers.podinfo.entrypoints=websecure,\
