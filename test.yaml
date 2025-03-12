@@ -1,12 +1,40 @@
-apiVersion: secrets.hashicorp.com/v1beta1
-kind: VaultStaticSecret
+---
+apiVersion: secrets-store.csi.x-k8s.io/v1
+kind: SecretProviderClass
 metadata:
-  name: vault-kv-app
+  name: vault-cloudflare-tunnel
 spec:
-  type: kv-v2
-  mount: kvv2
-  path: nexus/cloudflare/tunnel
-  destination:
-    name: secretkv
-    create: true
-  refreshAfter: 30s
+  provider: vault
+  secretObjects:
+    - data:
+        - key: credentials.json
+          objectName: credentials
+      secretName: cloudflare-tunnel
+      type: Opaque
+  parameters:
+    vaultAddress: "http://vault-active.vault-system.svc.cluster.local:8200"
+    roleName: "nexus"
+    objects: |
+      - objectName: "credentials"
+        secretPath: "kvv2/data/nexus/cloudflare/tunnel"
+        secretKey: "credentials.json"
+---
+kind: Pod
+apiVersion: v1
+metadata:
+  name: webapp
+spec:
+  containers:
+    - image: jweissig/app:0.0.1
+      name: webapp
+      volumeMounts:
+        - name: secrets-store-inline
+          mountPath: "/mnt/secrets-store"
+          readOnly: true
+  volumes:
+    - name: secrets-store-inline
+      csi:
+        driver: secrets-store.csi.k8s.io
+        readOnly: true
+        volumeAttributes:
+          secretProviderClass: "vault-cloudflare-tunnel"

@@ -21,3 +21,5 @@ spec:
       affinity: ""
       ha:
         enabled: true
+      csi:
+        enabled: true
