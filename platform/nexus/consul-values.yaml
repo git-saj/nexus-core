@@ -35,7 +35,7 @@ spec:
           traefik.ingress.kubernetes.io/router.entrypoints: websecure-int
     connectInject:
       enabled: true
-      default: false
+      default: true
     syncCatalog:
       enabled: true
       default: false
