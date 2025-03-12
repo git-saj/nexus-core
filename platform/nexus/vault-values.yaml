@@ -19,6 +19,12 @@ spec:
           cpu: 250m
     server:
       affinity: ""
+      ingress:
+        enabled: true
+        hosts:
+          - host: vault.sajbox.com
+        annotations:
+          traefik.ingress.kubernetes.io/router.entrypoints: websecure-int
       ha:
         enabled: true
     csi:
