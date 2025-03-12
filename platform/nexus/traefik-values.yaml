@@ -11,11 +11,24 @@ spec:
     ingressRoute:
       dashboard:
         enabled: true
-        matchRule: Host(`traefik.int.sajbox.com`)
-        entryPoints: ["websecure"]
+        matchRule: Host(`traefik.sajbox.com`)
+        entryPoints: ["websecure-internal"]
     service:
       annotations:
         consul.hashicorp.com/service-sync: "true"
+      additionalServices:
+        internal:
+          consul.hashicorp.com/service-sync: "true"
+    ports:
+      websecure-internal:
+        port: 9443
+        exposedPort: 443
+        protocol: TCP
+        expose:
+          default: false
+          internal: true
+        tls:
+          enabled: true
     additionalArguments:
       - "--providers.consulcatalog=true"
       - "--providers.consulcatalog.endpoint.address=consul-nexus-server.consul-system.svc.cluster.local:8500"
