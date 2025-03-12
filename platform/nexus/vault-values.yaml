@@ -41,5 +41,7 @@ spec:
             scheme = "https"
             tls_skip_verify = "true"
           }
+
+          service_registration "kubernetes" {}
     csi:
       enabled: true
