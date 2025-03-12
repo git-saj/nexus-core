@@ -10,8 +10,13 @@ spec:
   values:
     global:
       name: consul-nexus
-      metrics:
+      acls:
+        manageSystemACLs: true
+      gossipEncryption:
+        autoGenerate: true
+      tls:
         enabled: true
+        enableAutoEncrypt: true
     client:
       enabled: true
     server:
