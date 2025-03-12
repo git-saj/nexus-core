@@ -12,4 +12,5 @@ spec:
       consul.hashicorp.com/connect-inject: "true"
       consul.hashicorp.com/service-tags: "\
         traefik.enable=true,\
-        traefik.http.routers.podinfo.entrypoints=websecure"
+        traefik.http.routers.podinfo.entrypoints=websecure,\
+        traefik.http.routers.podinfo.rule=Host(`podinfo.saj.sh`)"
