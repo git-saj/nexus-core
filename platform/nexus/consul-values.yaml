@@ -30,7 +30,7 @@ spec:
       ingress:
         enabled: true
         hosts:
-          - consul.sajbox.com
+          - host: consul.sajbox.com
         annotations: |
           traefik.ingress.kubernetes.io/router.entrypoints: websecure-int
     connectInject:
