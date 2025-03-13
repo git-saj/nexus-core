@@ -35,14 +35,9 @@ spec:
         type: ClusterIP
         port: 8501
         targetPort: 8501
-        annotations:
+        annotations: |
           consul.hashicorp.com/service-sync: "true"
-          consul.hashicorp.com/service-tags: "\
-            traefik.enable=true,\
-            traefik.http.routers.consul-ui.entrypoints=websecure-int,\
-            traefik.http.routers.consul-ui.rule=Host(`consul.sajbox.com`),\
-            traefik.http.routers.consul-ui.tls=true,\
-            traefik.http.routers.consul-ui.tls.passthrough=true"
+          consul.hashicorp.com/service-tags: "traefik.enable=true,traefik.http.routers.consul-ui.entrypoints=websecure-int,traefik.http.routers.consul-ui.rule=Host(`consul.sajbox.com`),traefik.http.routers.consul-ui.tls=true,traefik.http.routers.consul-ui.tls.passthrough=true"
     connectInject:
       enabled: true
       default: false
