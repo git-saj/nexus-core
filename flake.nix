@@ -140,7 +140,7 @@
           kubernetes-helm
           helm-ls
           kubectl
-          lens-desktop
+          lens
           jq
           gh
           fluxcd
