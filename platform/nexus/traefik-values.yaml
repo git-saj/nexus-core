@@ -16,12 +16,6 @@ spec:
         enabled: true
         matchRule: Host(`traefik.sajbox.com`)
         entryPoints: ["websecure-int"]
-    service:
-      annotations:
-        consul.hashicorp.com/service-sync: "true"
-      additionalServices:
-        internal:
-          consul.hashicorp.com/service-sync: "true"
     ports:
       websecure-int:
         port: 9443

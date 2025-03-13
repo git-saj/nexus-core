@@ -10,6 +10,7 @@ spec:
   values:
     global:
       name: consul-nexus
+      logLevel: debug
       gossipEncryption:
         autoGenerate: true
       tls:
