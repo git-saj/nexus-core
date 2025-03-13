@@ -16,6 +16,10 @@ spec:
         enabled: true
         matchRule: Host(`traefik.sajbox.com`)
         entryPoints: ["websecure-int"]
+    service:
+      additionalServices:
+        internal:
+          type: LoadBalancer
     ports:
       websecure-int:
         port: 9443
