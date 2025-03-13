@@ -13,7 +13,7 @@ spec:
       gossipEncryption:
         autoGenerate: true
       tls:
-        enabled: true
+        enabled: false
         enableAutoEncrypt: true
         httpsOnly: false
     client:
