@@ -13,7 +13,7 @@ spec:
       gossipEncryption:
         autoGenerate: true
       tls:
-        enabled: true
+        enabled: false # TODO: enable TLS, need to resolve errors with ingress
         enableAutoEncrypt: true
         httpsOnly: false
     client:
