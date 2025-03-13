@@ -6,10 +6,7 @@ metadata:
 spec:
   chart:
     spec:
-      version: ">=0.29.1"
-  dependsOn:
-    - name: consul
-      namespace: consul-system
+      version: "0.29.1"
   values:
     global:
       enabled: true
@@ -21,29 +18,42 @@ spec:
           memory: 256Mi
           cpu: 250m
     server:
-      affinity: ""
-      ingress:
+      affinity: "" # TODO: Remove when ready
+
+      dataStorage:
         enabled: true
-        hosts:
-          - host: vault.sajbox.com
-        annotations:
-          traefik.ingress.kubernetes.io/router.entrypoints: websecure-int
+        storageClass: "local-path"
+
+      readinessProbe:
+        enabled: true
+        path: "/v1/sys/health?standbyok=true&sealedcode=204&uninitcode=204"
+      livenessProbe:
+        enabled: true
+        path: "/v1/sys/health?standbyok=true"
+        initialDelaySeconds: 60
+
       ha:
         enabled: true
         config: |
           ui = true
+          cluster_name = "vault-cluster"
 
           listener "tcp" {
             tls_disable = 1
             address = "[::]:8200"
             cluster_address = "[::]:8201"
           }
-          storage "consul" {
-            path = "vault"
-            address = "HOST_IP:8501"
-            scheme = "https"
-            tls_skip_verify = "true"
-          }
+          storage "raft" {
+            path = "/vault/data"
+            retry_join {
+              leader_api_addr = "http://vault-0.vault-internal:8200"
+            }
+            retry_join {
+              leader_api_addr = "http://vault-1.vault-internal:8200"
+            }
+            retry_join {
+              leader_api_addr = "http://vault-2.vault-internal:8200"
+            }
 
           service_registration "kubernetes" {}
     csi:
