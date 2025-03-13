@@ -49,7 +49,7 @@ in {
       librewolf-bin
       logseq
       obsidian
-      discord
+      legcord
       vim
       vlc
       wget
