@@ -10,11 +10,10 @@ spec:
   values:
     global:
       name: consul-nexus
-      logLevel: debug
       gossipEncryption:
         autoGenerate: true
       tls:
-        enabled: false
+        enabled: true
         enableAutoEncrypt: true
         httpsOnly: false
     client:
@@ -32,11 +31,12 @@ spec:
           memory: 1024Mi
     ui:
       enabled: true
-      service:
+      ingress:
         enabled: true
+        hosts:
+          - host: consul.sajbox.com
         annotations: |
-          consul.hashicorp.com/service-sync: "true"
-          consul.hashicorp.com/service-tags: "traefik.enable=true,traefik.http.routers.consul-ui.entrypoints=websecure-int,traefik.http.routers.consul-ui.rule=Host(`consul.sajbox.com`)"
+          traefik.ingress.kubernetes.io/router.entrypoints: websecure-int
     connectInject:
       enabled: true
       default: false

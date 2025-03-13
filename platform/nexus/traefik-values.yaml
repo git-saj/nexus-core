@@ -33,4 +33,3 @@ spec:
       - "--providers.consulcatalog.exposedByDefault=false"
       - "--providers.consulcatalog.connectAware=true"
       - "--providers.consulcatalog.connectByDefault=true"
-      - "--log.level=debug"
