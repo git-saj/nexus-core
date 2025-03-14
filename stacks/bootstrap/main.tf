@@ -18,19 +18,11 @@ module "bootstrap" {
       disko_main_device = each.value.nixos_anywhere.disko_main_device
     }
   }
+
 }
 
 locals {
   results = {
     for k, v in module.bootstrap : k => v.result.out
-  }
-}
-
-resource "null_resource" "deploy_after_bootstrap" {
-  triggers = {
-    result_changes = jsonencode(local.results)
-  }
-  provisioner "local-exec" {
-    command = "deploy -- ../.."
   }
 }

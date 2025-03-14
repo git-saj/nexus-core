@@ -14,7 +14,7 @@ globals {
       name  = "k8s002"
       roles = ["controlplane", "worker", "etcd"]
       nixos_anywhere = {
-        enable            = true
+        enable            = false
         instance_id       = 1
         disko_main_device = "/dev/nvme0n1"
       }

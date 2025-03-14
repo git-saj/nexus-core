@@ -6,7 +6,7 @@ locals {
       name = "k8s002"
       nixos_anywhere = {
         disko_main_device = "/dev/nvme0n1"
-        enable            = true
+        enable            = false
         instance_id       = 1
       }
       roles = [
