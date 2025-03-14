@@ -3,4 +3,4 @@ kind: Namespace
 metadata:
   name: podinfo
   labels:
-    istio-injection: enabled
+    istio-injection: enabled # TODO: shouldn't be added at base
