@@ -54,6 +54,7 @@ spec:
             retry_join {
               leader_api_addr = "http://vault-2.vault-internal:8200"
             }
+          }
 
           service_registration "kubernetes" {}
     csi:
