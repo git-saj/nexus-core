@@ -3,7 +3,7 @@ kind: Kustomization
 resources:
   - ../_base/local-path-provisioner
   - ../_base/secrets-csi
-  - ../_base/nexus
+  - ../_base/vault
 
 patches:
   - path: vault-values.yaml
