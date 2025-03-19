@@ -1,4 +1,4 @@
-{...}: {
+{pkgs, ...}: {
   imports = [
     ../common/global
     ../common/optional/nvidia.nix
@@ -16,6 +16,13 @@
     firewall.enable = false;
     usePredictableInterfaceNames = false;
   };
+
+  environment.systemPackages = with pkgs; [
+    nodejs
+    ffmpeg-full
+    typescript
+    cudatoolkit
+  ];
 
   system.stateVersion = "24.11";
 }

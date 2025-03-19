@@ -34,6 +34,7 @@ in {
 
   virtualisation.docker.enable = true;
   programs.ssh.startAgent = true;
+  programs.steam.enable = true;
 
   users.users.s0010054j = {
     isNormalUser = true;

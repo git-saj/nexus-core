@@ -32,8 +32,8 @@ resource "rke_cluster" "nexus" {
   }
 
   addons_include = [
-    "https://kube-vip.io/manifests/rbac.yaml",
-    "./manifests/kube-vip-pod.yaml",
+    "./manifests/kube-vip-rbac.yaml",
+    "./manifests/kube-vip-ds.yaml",
     "https://raw.githubusercontent.com/kube-vip/kube-vip-cloud-provider/main/manifest/kube-vip-cloud-controller.yaml",
     "./manifests/kube-vip-cm.yaml"
   ]

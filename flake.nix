@@ -140,6 +140,8 @@
           kubernetes-helm
           helm-ls
           kubectl
+          istioctl
+          k6
           lens
           jq
           gh

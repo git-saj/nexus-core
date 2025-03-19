@@ -10,7 +10,9 @@
   ];
 
   hardware.nvidia = {
-    open = false;
+    open = true;
     prime.offload.enable = false;
   };
+
+  hardware.graphics.enable = true;
 }
