@@ -16,7 +16,6 @@ in {
   services.displayManager.autoLogin.enable = true;
   services.displayManager.autoLogin.user = "s0010054j";
 
-  programs.firefox.enable = true;
   programs.direnv.enable = true;
 
   nix.settings.experimental-features = [
