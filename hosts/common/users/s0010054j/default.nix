@@ -35,11 +35,16 @@ in {
   programs.ssh.startAgent = true;
   programs.steam.enable = true;
 
+  programs.virt-manager.enable = true;
+  virtualisation.libvirtd.enable = true;
+  virtualisation.spiceUSBRedirection.enable = true;
+
   users.users.s0010054j = {
     isNormalUser = true;
     extraGroups = ifTheyExist [
       "wheel"
       "docker"
+      "libvirtd"
     ];
     packages = with pkgs; [
       chromium
@@ -53,7 +58,7 @@ in {
       vim
       vlc
       wget
-      unstable.zed-editor
+      unstable.zed-editor-fhs
       unstable.package-version-server
     ];
   };

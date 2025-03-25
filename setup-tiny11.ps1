@@ -9,7 +9,8 @@ $chocoPackages = @(
     "7zip",
     "notepadplusplus",
     "everything",
-    "pwsh"
+    "pwsh",
+    "leagueoflegends"
 )
 
 # Ensure script runs with elevated privileges
