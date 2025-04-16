@@ -7,5 +7,6 @@
     vim
     zoxide
     mlocate
+    nh
   ];
 }
