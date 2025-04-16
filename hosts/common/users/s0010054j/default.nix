@@ -34,6 +34,7 @@ in {
   virtualisation.docker.enable = true;
   programs.ssh.startAgent = true;
   programs.steam.enable = true;
+  programs.zsh.enable = true;
 
   programs.virt-manager.enable = true;
   virtualisation.libvirtd.enable = true;
@@ -41,6 +42,7 @@ in {
 
   users.users.s0010054j = {
     isNormalUser = true;
+    shell = pkgs.zsh;
     extraGroups = ifTheyExist [
       "wheel"
       "docker"
@@ -60,6 +62,9 @@ in {
       wget
       unstable.zed-editor-fhs
       unstable.package-version-server
+      neovim
+      tmux
+      oh-my-zsh
     ];
   };
 }
