@@ -19,9 +19,6 @@
     systems.url = "github:nix-systems/default-linux";
     hardware.url = "github:nixos/nixos-hardware";
 
-    # nix-gaming
-    nix-gaming.url = "github:fufexan/nix-gaming";
-
     # disko
     disko = {
       url = "github:nix-community/disko";
