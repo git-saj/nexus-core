@@ -35,6 +35,7 @@ in {
   programs.ssh.startAgent = true;
   programs.steam.enable = true;
   programs.zsh.enable = true;
+  services.locate.enable = true;
 
   programs.virt-manager.enable = true;
   virtualisation.libvirtd.enable = true;

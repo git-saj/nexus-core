@@ -6,7 +6,6 @@
     git
     vim
     zoxide
-    mlocate
     nh
   ];
 }
