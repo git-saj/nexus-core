@@ -66,6 +66,7 @@ in {
       neovim
       tmux
       oh-my-zsh
+      ripgrep
     ];
   };
 }
