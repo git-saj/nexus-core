@@ -43,6 +43,7 @@ in {
   programs.zsh = {
     enable = true;
     enableCompletion = true;
+    enableBashCompletion = true;
     autosuggestions.enable = true;
     syntaxHighlighting.enable = true;
 
@@ -66,6 +67,8 @@ in {
       "libvirtd"
     ];
     packages = with pkgs; [
+      azure-cli
+      kubectl
       chromium
       devpod
       ghostty
