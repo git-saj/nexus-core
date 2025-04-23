@@ -34,12 +34,28 @@ in {
   virtualisation.docker.enable = true;
   programs.ssh.startAgent = true;
   programs.steam.enable = true;
-  programs.zsh.enable = true;
   services.locate.enable = true;
 
   programs.virt-manager.enable = true;
   virtualisation.libvirtd.enable = true;
   virtualisation.spiceUSBRedirection.enable = true;
+
+  programs.zsh = {
+    enable = true;
+    enableCompletion = true;
+    autosuggestions.enable = true;
+    syntaxHighlighting.enable = true;
+
+    shellAliases = {
+      ll = "ls -l";
+    };
+    histSize = 100000;
+
+    ohMyZsh = {
+      enable = true;
+      plugins = ["thefuck"];
+    };
+  };
 
   users.users.s0010054j = {
     isNormalUser = true;
@@ -65,7 +81,6 @@ in {
       unstable.package-version-server
       neovim
       tmux
-      oh-my-zsh
       ripgrep
     ];
   };
