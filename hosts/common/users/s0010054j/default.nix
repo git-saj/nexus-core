@@ -82,6 +82,7 @@ in {
       neovim
       tmux
       ripgrep
+      thefuck
     ];
   };
 }
