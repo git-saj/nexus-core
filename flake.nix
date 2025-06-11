@@ -130,7 +130,7 @@
           git
           nil # Nix language server
           nh
-          inputs.deploy-rs.defaultPackage.${system}
+          inputs.deploy-rs.packages.${system}.deploy-rs
           terraform
           terraform-ls
           terramate
