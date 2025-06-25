@@ -14,7 +14,7 @@
 
   inputs = {
     # nix
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     systems.url = "github:nix-systems/default-linux";
     hardware.url = "github:nixos/nixos-hardware";
@@ -139,7 +139,6 @@
           kubectl
           istioctl
           k6
-          lens
           jq
           gh
           fluxcd
