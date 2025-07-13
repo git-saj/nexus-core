@@ -67,7 +67,7 @@ in {
       "libvirtd"
     ];
     packages = with pkgs; [
-      azure-cli
+      (azure-cli.withExtensions [azure-cli.extensions.aks-preview])
       kubectl
       chromium
       devpod
