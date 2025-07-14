@@ -13,6 +13,13 @@ in {
     variant = "";
   };
 
+  services.openvpn.servers = {
+    prdeu = {
+      config = ''config /home/s0010054j/openvpn/prdeu.ovpn '';
+      updateResolvConf = true;
+    };
+  };
+
   services.displayManager.autoLogin.enable = true;
   services.displayManager.autoLogin.user = "s0010054j";
 
