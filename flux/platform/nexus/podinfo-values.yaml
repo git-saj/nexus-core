@@ -24,5 +24,8 @@ spec:
       retries: 3
   test:
     enable: true
+    filters:
+      - name: grpc # excluded grpc test, due to rpi incompatible
+        exclude: true
   driftDetection:
     mode: warn
