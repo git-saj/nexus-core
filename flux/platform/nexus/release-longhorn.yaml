@@ -29,17 +29,17 @@ spec:
   values:
     # Replica settings (set to 2 for availability on 2 nodes; avoids scheduling failures)
     defaultSettings:
-      defaultReplicaCount: 2  # Default: 3; match node count
-      defaultDataPath: "/var/lib/longhorn"  # Use large disk; ensure mounted if needed
+      defaultReplicaCount: 2 # Default: 3; match node count
+      defaultDataPath: "/var/lib/longhorn" # Use large disk; ensure mounted if needed
 
     # Persistence (default StorageClass)
     persistence:
-      defaultClass: true  # Make Longhorn default SC
-      defaultClassReplicaCount: 2  # Match above
+      defaultClass: true # Make Longhorn default SC
+      defaultClassReplicaCount: 2 # Match above
 
     # CSI (scale replicas to 2 for small cluster; saves resources)
     csi:
-      attacherReplicaCount: 2  # Default: 3
+      attacherReplicaCount: 2 # Default: 3
       provisionerReplicaCount: 2
       resizerReplicaCount: 2
       snapshotterReplicaCount: 2
@@ -47,15 +47,6 @@ spec:
     # Manager/Engine (minimal replicas)
     longhornManager:
       replicaCount: 2
-    longhornEngine:
-      replicaCount: 2
-
-    # UI (optional but useful; enable if needed)
-    longhornUI:
-      replicaCount: 2
-
-    # Resources (tune for your nodes; arm64 has less RAM/CPU)
-    longhornManager:
       resources:
         requests:
           cpu: 100m
@@ -63,4 +54,9 @@ spec:
         limits:
           cpu: 500m
           memory: 512Mi
-    # Similar for other components if over-allocating
+    longhornEngine:
+      replicaCount: 2
+
+    # UI (optional but useful; enable if needed)
+    longhornUI:
+      replicaCount: 2
