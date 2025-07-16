@@ -11,6 +11,6 @@ spec:
   sourceRef:
     kind: GitRepository
     name: flux-system
-  path: ./platform/nexus
+  path: ./flux/platform/nexus
   prune: true
   wait: true
