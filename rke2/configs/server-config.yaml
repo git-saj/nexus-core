@@ -1,0 +1,23 @@
+# server: https://k8s-home-prod.int.sajbox.net:9345 # Uncomment when joining to a cluster
+token: <token>
+
+# Critical matching values (defaults)
+cluster-cidr: "10.42.0.0/16"
+service-cidr: "10.43.0.0/16"
+cluster-dns: "10.43.0.10"
+cluster-domain: "cluster.local"
+
+# Common
+write-kubeconfig-mode: "0644"
+
+# Networking (Cilium; disables kube-proxy)
+cni: "cilium"
+disable-kube-proxy: true
+
+# Disable unnecessary components
+disable:
+  - rke2-ingress-nginx # As requested
+
+# TLS additions
+tls-san:
+  - "k8s-home-prod.int.sajbox.net"

@@ -1,8 +1,0 @@
-apiVersion: source.toolkit.fluxcd.io/v1
-kind: HelmRepository
-metadata:
-  name: secrets-csi
-  namespace: secrets-csi-system
-spec:
-  interval: 5m
-  url: https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts

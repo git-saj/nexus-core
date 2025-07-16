@@ -1,20 +1,17 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: secrets-csi
-  namespace: secrets-csi-system
+  name: podinfo
+  namespace: podinfo
 spec:
-  releaseName: secrets-csi
+  releaseName: podinfo
   chart:
     spec:
-      chart: secrets-store-csi-driver
+      chart: podinfo
       sourceRef:
         kind: HelmRepository
-        name: secrets-csi
+        name: podinfo
   interval: 5m
   install:
     remediation:
       retries: 3
-  values:
-    syncSecret:
-      enabled: true

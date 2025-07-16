@@ -16,6 +16,7 @@ in {
   services.openvpn.servers = {
     prdeu = {
       config = ''config /home/s0010054j/openvpn/prdeu.ovpn '';
+      autoStart = false;
       updateResolvConf = true;
     };
   };
