@@ -7,3 +7,6 @@ spec:
   chart:
     spec:
       version: ">=6.8.0"
+  targetNamespace: platform-podinfo
+  install:
+    createNamespace: true
