@@ -15,3 +15,12 @@ metadata:
 spec:
   interval: 10m
   url: https://charts.longhorn.io
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  name: hashicorp
+  namespace: flux-system
+spec:
+  interval: 10m
+  url: https://helm.releases.hashicorp.com

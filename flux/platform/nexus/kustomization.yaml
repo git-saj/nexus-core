@@ -4,3 +4,4 @@ resources:
   - ../_base/helm
   - release-longhorn.yaml
   - release-podinfo.yaml
+  - release-vault.yaml

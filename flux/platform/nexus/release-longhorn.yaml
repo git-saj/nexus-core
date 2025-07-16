@@ -23,23 +23,23 @@ spec:
     remediation:
       retries: 3
   test:
-    enable: true # disabled due to rpi incompatible
+    enable: true
   driftDetection:
     mode: warn
   values:
     # Replica settings (set to 2 for availability on 2 nodes; avoids scheduling failures)
     defaultSettings:
-      defaultReplicaCount: 2 # Default: 3; match node count
+      defaultReplicaCount: 2
       defaultDataPath: "/var/lib/longhorn" # Use large disk; ensure mounted if needed
 
     # Persistence (default StorageClass)
     persistence:
       defaultClass: true # Make Longhorn default SC
-      defaultClassReplicaCount: 2 # Match above
+      defaultClassReplicaCount: 2
 
     # CSI (scale replicas to 2 for small cluster; saves resources)
     csi:
-      attacherReplicaCount: 2 # Default: 3
+      attacherReplicaCount: 2
       provisionerReplicaCount: 2
       resizerReplicaCount: 2
       snapshotterReplicaCount: 2
