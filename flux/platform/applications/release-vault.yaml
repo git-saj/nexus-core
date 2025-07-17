@@ -42,14 +42,13 @@ spec:
               path = "/vault/data"
             }
             service_registration "kubernetes" {}
-            # Autoseal configuration (uncomment when ready)
-            # seal "kubernetes" {
-            #   service_account_token_path = "/var/run/secrets/kubernetes.io/serviceaccount/token"
-            #   kubernetes_host = "https://kubernetes.default.svc.cluster.local:443"
-            #   kubernetes_ca_cert_path = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
-            #   secret_name = "vault-autoseal"
-            #   secret_namespace = "vault-system"
-            # }
+            seal "kubernetes" {
+              service_account_token_path = "/var/run/secrets/kubernetes.io/serviceaccount/token"
+              kubernetes_host = "https://kubernetes.default.svc.cluster.local:443"
+              kubernetes_ca_cert_path = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+              secret_name = "vault-autoseal-key"
+              secret_namespace = "vault-system"
+            }
       affinity: |
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
