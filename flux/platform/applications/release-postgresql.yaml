@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: cluster
-      version: "0.3.1"
+      version: ">=0.0.8"
       sourceRef:
         kind: HelmRepository
         name: cnpg
@@ -38,7 +38,7 @@ spec:
 
       # Storage configuration using Longhorn
       storage:
-        size: 10Gi
+        size: 20Gi
         storageClass: longhorn
 
       # Resources for 2-node homelab environment
@@ -96,3 +96,31 @@ spec:
     #   secret:
     #     create: true
     #     name: backup-credentials
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: postgresql-credentials
+  namespace: postgres-system
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    kind: ClusterSecretStore
+    name: vault-backend
+  target:
+    name: postgresql-credentials
+    creationPolicy: Owner
+    template:
+      type: kubernetes.io/basic-auth
+      data:
+        username: "{{ .username }}"
+        password: "{{ .password }}"
+  data:
+    - secretKey: username
+      remoteRef:
+        key: secret/data/postgres
+        property: username
+    - secretKey: password
+      remoteRef:
+        key: secret/data/postgres
+        property: password
