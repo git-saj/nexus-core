@@ -31,7 +31,7 @@ spec:
 
     # PostgreSQL settings
     postgresql:
-      replicaCount: 2  # Primary + 1 replica for 2-node setup
+      replicaCount: 2 # Primary + 1 replica for 2-node setup
 
       # Resource limits for homelab
       resources:
@@ -46,11 +46,11 @@ spec:
       affinity:
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
-          - labelSelector:
-              matchLabels:
-                app.kubernetes.io/name: postgresql-ha
-                app.kubernetes.io/component: postgresql
-            topologyKey: kubernetes.io/hostname
+            - labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: postgresql-ha
+                  app.kubernetes.io/component: postgresql
+              topologyKey: kubernetes.io/hostname
 
       # Persistence
       persistence:
@@ -67,6 +67,21 @@ spec:
       # Network policy (optional)
       networkPolicy:
         enabled: false
+
+      # PostgreSQL configuration
+      configuration:
+        max_connections: 100
+        shared_buffers: 128MB
+        effective_cache_size: 512MB
+        maintenance_work_mem: 64MB
+        checkpoint_completion_target: 0.9
+        wal_buffers: 16MB
+        default_statistics_target: 100
+        random_page_cost: 4
+        effective_io_concurrency: 2
+        work_mem: 4MB
+        min_wal_size: 1GB
+        max_wal_size: 4GB
 
     # PgPool settings for connection pooling and load balancing
     pgpool:
@@ -85,35 +100,19 @@ spec:
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 100
-            podAffinityTerm:
-              labelSelector:
-                matchLabels:
-                  app.kubernetes.io/name: postgresql-ha
-                  app.kubernetes.io/component: pgpool
-              topologyKey: kubernetes.io/hostname
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/name: postgresql-ha
+                    app.kubernetes.io/component: pgpool
+                topologyKey: kubernetes.io/hostname
 
     # Persistence for PgPool
     persistence:
       enabled: true
       storageClass: "longhorn"
       size: 2Gi
-
-    # Backup configuration (optional)
-    postgresql:
-      configuration:
-        max_connections: 100
-        shared_buffers: 128MB
-        effective_cache_size: 512MB
-        maintenance_work_mem: 64MB
-        checkpoint_completion_target: 0.9
-        wal_buffers: 16MB
-        default_statistics_target: 100
-        random_page_cost: 4
-        effective_io_concurrency: 2
-        work_mem: 4MB
-        min_wal_size: 1GB
-        max_wal_size: 4GB
 
     # Service configuration
     service:
@@ -157,11 +156,11 @@ spec:
         postgres-password: "{{ .password }}"
         repmgr-password: "{{ .repmgrPassword }}"
   data:
-  - secretKey: password
-    remoteRef:
-      key: database/postgresql
-      property: password
-  - secretKey: repmgrPassword
-    remoteRef:
-      key: database/postgresql
-      property: repmgr-password
+    - secretKey: password
+      remoteRef:
+        key: database/postgresql
+        property: password
+    - secretKey: repmgrPassword
+      remoteRef:
+        key: database/postgresql
+        property: repmgr-password
