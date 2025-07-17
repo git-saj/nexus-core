@@ -30,9 +30,8 @@ spec:
       existingSecret: "redis-credentials"
       existingSecretPasswordKey: "password"
 
-    # Master configuration
+    # Resource limits for homelab
     master:
-      # Resource limits for homelab
       resources:
         requests:
           cpu: 100m
@@ -41,17 +40,19 @@ spec:
           cpu: 500m
           memory: 512Mi
 
-      # Persistence
-      persistence:
-        enabled: true
-        storageClass: "longhorn"
-        size: 8Gi
+    # Persistence
+    persistence:
+      enabled: true
+      storageClass: "longhorn"
+      size: 8Gi
 
-      # Service configuration
-      service:
-        type: ClusterIP
-        ports:
-          redis: 6379
+    # Disable sentinel explicitly
+    sentinel:
+      enabled: false
+
+    # Disable replica for standalone mode
+    replica:
+      replicaCount: 0
 
     # Redis configuration - simplified
     commonConfiguration: |-
