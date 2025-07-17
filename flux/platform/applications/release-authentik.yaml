@@ -54,18 +54,15 @@ spec:
           memory: 512Mi
   valuesFrom:
     - kind: Secret
-      name: authentik-postgresql-credentials
-      namespace: postgres-system
+      name: authentik-postgresql-credentials-flux
       valuesKey: username
       targetPath: authentik.postgresql.user
     - kind: Secret
-      name: authentik-postgresql-credentials
-      namespace: postgres-system
+      name: authentik-postgresql-credentials-flux
       valuesKey: password
       targetPath: authentik.postgresql.password
     - kind: Secret
-      name: authentik-secrets
-      namespace: authentik-system
+      name: authentik-secrets-flux
       valuesKey: secret_key
       targetPath: authentik.secret_key
 ---
@@ -181,6 +178,56 @@ spec:
     name: vault-backend
   target:
     name: authentik-secrets
+    creationPolicy: Owner
+    template:
+      data:
+        secret_key: "{{ .secret_key }}"
+  data:
+    - secretKey: secret_key
+      remoteRef:
+        key: secret/data/authentik
+        property: secret_key
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: authentik-postgresql-credentials-flux
+  namespace: flux-system
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    kind: ClusterSecretStore
+    name: vault-backend
+  target:
+    name: authentik-postgresql-credentials-flux
+    creationPolicy: Owner
+    template:
+      type: kubernetes.io/basic-auth
+      data:
+        username: "{{ .username }}"
+        password: "{{ .password }}"
+  data:
+    - secretKey: username
+      remoteRef:
+        key: secret/data/authentik-postgres
+        property: username
+    - secretKey: password
+      remoteRef:
+        key: secret/data/authentik-postgres
+        property: password
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: authentik-secrets-flux
+  namespace: flux-system
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    kind: ClusterSecretStore
+    name: vault-backend
+  target:
+    name: authentik-secrets-flux
     creationPolicy: Owner
     template:
       data:
