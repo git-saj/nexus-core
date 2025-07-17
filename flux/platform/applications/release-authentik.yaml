@@ -115,12 +115,12 @@ spec:
             - name: PGUSER
               valueFrom:
                 secretKeyRef:
-                  name: postgresql-credentials
+                  name: postgresql-cluster-superuser
                   key: username
             - name: PGPASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: postgresql-credentials
+                  name: postgresql-cluster-superuser
                   key: password
             - name: AUTHENTIK_DB
               value: authentik
