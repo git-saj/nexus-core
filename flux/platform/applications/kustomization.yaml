@@ -5,3 +5,4 @@ resources:
   - release-longhorn.yaml
   - release-vault.yaml
   - release-postgresql.yaml
+  - release-authentik.yaml

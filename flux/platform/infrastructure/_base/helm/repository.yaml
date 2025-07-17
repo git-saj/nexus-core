@@ -70,4 +70,13 @@ spec:
   interval: 10m
   url: https://cloudnative-pg.github.io/charts
 ---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  name: authentik
+  namespace: flux-system
+spec:
+  interval: 10m
+  url: https://charts.goauthentik.io
+---
 

@@ -1,0 +1,192 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: authentik
+  namespace: flux-system
+spec:
+  interval: 10m
+  timeout: 5m
+  chart:
+    spec:
+      chart: authentik
+      version: "2025.6.3"
+      sourceRef:
+        kind: HelmRepository
+        name: authentik
+  releaseName: authentik
+  targetNamespace: authentik-system
+  install:
+    createNamespace: true
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  test:
+    enable: true
+  driftDetection:
+    mode: warn
+  values:
+    authentik:
+      postgresql:
+        host: postgresql-cluster-rw.postgres-system.svc.cluster.local
+        port: 5432
+        name: authentik
+    postgresql:
+      enabled: false
+    redis:
+      enabled: true
+    server:
+      resources:
+        requests:
+          cpu: 100m
+          memory: 256Mi
+        limits:
+          cpu: 500m
+          memory: 1Gi
+    worker:
+      resources:
+        requests:
+          cpu: 100m
+          memory: 128Mi
+        limits:
+          cpu: 300m
+          memory: 512Mi
+  valuesFrom:
+    - kind: Secret
+      name: authentik-postgresql-credentials
+      namespace: postgres-system
+      valuesKey: username
+      targetPath: authentik.postgresql.user
+    - kind: Secret
+      name: authentik-postgresql-credentials
+      namespace: postgres-system
+      valuesKey: password
+      targetPath: authentik.postgresql.password
+    - kind: Secret
+      name: authentik-secrets
+      namespace: authentik
+      valuesKey: secret_key
+      targetPath: authentik.secret_key
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: authentik-postgresql-credentials
+  namespace: postgres-system
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    kind: ClusterSecretStore
+    name: vault-backend
+  target:
+    name: authentik-postgresql-credentials
+    creationPolicy: Owner
+    template:
+      type: kubernetes.io/basic-auth
+      data:
+        username: "{{ .username }}"
+        password: "{{ .password }}"
+  data:
+    - secretKey: username
+      remoteRef:
+        key: secret/data/authentik-postgres
+        property: username
+    - secretKey: password
+      remoteRef:
+        key: secret/data/authentik-postgres
+        property: password
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: authentik-db-init
+  namespace: postgres-system
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: init-db
+          image: postgres:16
+          env:
+            - name: PGHOST
+              value: postgresql-cluster-rw
+            - name: PGPORT
+              value: "5432"
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: postgresql-credentials
+                  key: username
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgresql-credentials
+                  key: password
+            - name: AUTHENTIK_DB
+              value: authentik
+            - name: AUTHENTIK_USER
+              valueFrom:
+                secretKeyRef:
+                  name: authentik-postgresql-credentials
+                  key: username
+            - name: AUTHENTIK_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: authentik-postgresql-credentials
+                  key: password
+          command:
+            - /bin/bash
+            - -c
+            - |
+              # Idempotent script to create/update user and DB
+              EXISTS=$(psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='$AUTHENTIK_USER'")
+              if [ "$EXISTS" = "1" ]; then
+                echo "Updating password for user $AUTHENTIK_USER"
+                psql -c "ALTER USER \"$AUTHENTIK_USER\" WITH PASSWORD '$AUTHENTIK_PASSWORD';"
+              else
+                echo "Creating user $AUTHENTIK_USER"
+                psql -c "CREATE USER \"$AUTHENTIK_USER\" WITH PASSWORD '$AUTHENTIK_PASSWORD';"
+              fi
+
+              EXISTS=$(psql -tAc "SELECT 1 FROM pg_database WHERE datname='$AUTHENTIK_DB'")
+              if [ "$EXISTS" != "1" ]; then
+                echo "Creating database $AUTHENTIK_DB"
+                psql -c "CREATE DATABASE \"$AUTHENTIK_DB\" OWNER \"$AUTHENTIK_USER\";"
+              else
+                echo "Database $AUTHENTIK_DB already exists"
+              fi
+
+              echo "Granting privileges"
+              psql -c "GRANT ALL PRIVILEGES ON DATABASE \"$AUTHENTIK_DB\" TO \"$AUTHENTIK_USER\";"
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: authentik-secrets
+  namespace: authentik
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    kind: ClusterSecretStore
+    name: vault-backend
+  target:
+    name: authentik-secrets
+    creationPolicy: Owner
+    template:
+      data:
+        secret_key: "{{ .secret_key }}"
+  data:
+    - secretKey: secret_key
+      remoteRef:
+        key: secret/data/authentik
+        property: secret_key
