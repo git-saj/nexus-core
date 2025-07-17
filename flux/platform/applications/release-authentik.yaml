@@ -65,7 +65,7 @@ spec:
       targetPath: authentik.postgresql.password
     - kind: Secret
       name: authentik-secrets
-      namespace: authentik
+      namespace: authentik-system
       valuesKey: secret_key
       targetPath: authentik.secret_key
 ---
@@ -173,7 +173,7 @@ apiVersion: external-secrets.io/v1
 kind: ExternalSecret
 metadata:
   name: authentik-secrets
-  namespace: authentik
+  namespace: authentik-system
 spec:
   refreshInterval: 1h
   secretStoreRef:
