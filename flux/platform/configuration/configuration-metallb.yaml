@@ -3,8 +3,7 @@ kind: IPAddressPool
 metadata:
   name: internal-pool
   namespace: metallb-system
-  annotations:
-    kustomize.toolkit.fluxcd.io/depends-on: flux-system/metallb
+
 spec:
   addresses:
     - 192.168.10.210-192.168.10.220
@@ -14,8 +13,7 @@ kind: L2Advertisement
 metadata:
   name: internal-l2
   namespace: metallb-system
-  annotations:
-    kustomize.toolkit.fluxcd.io/depends-on: flux-system/metallb
+
 spec:
   ipAddressPools:
     - internal-pool
@@ -25,8 +23,7 @@ kind: IPAddressPool
 metadata:
   name: external-pool
   namespace: metallb-system
-  annotations:
-    kustomize.toolkit.fluxcd.io/depends-on: flux-system/metallb
+
 spec:
   addresses:
     - 192.168.10.221-192.168.10.230
@@ -36,8 +33,7 @@ kind: L2Advertisement
 metadata:
   name: external-l2
   namespace: metallb-system
-  annotations:
-    kustomize.toolkit.fluxcd.io/depends-on: flux-system/metallb
+
 spec:
   ipAddressPools:
     - external-pool

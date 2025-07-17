@@ -1,7 +1,7 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: platform
+  name: platform-infrastructure
   namespace: flux-system
 spec:
   interval: 5m
@@ -10,6 +10,42 @@ spec:
   sourceRef:
     kind: GitRepository
     name: flux-system
-  path: ./flux/platform/nexus
+  path: ./flux/platform/infrastructure
+  prune: true
+  wait: true
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: platform-configuration
+  namespace: flux-system
+spec:
+  interval: 5m
+  retryInterval: 1m
+  timeout: 5m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  path: ./flux/platform/configuration
+  dependsOn:
+    - name: platform-infrastructure
+  prune: true
+  wait: true
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: platform-applications
+  namespace: flux-system
+spec:
+  interval: 5m
+  retryInterval: 1m
+  timeout: 5m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  path: ./flux/platform/applications
+  dependsOn:
+    - name: platform-configuration
   prune: true
   wait: true
