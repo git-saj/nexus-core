@@ -1,5 +1,5 @@
 # server: https://k8s-home-prod.int.sajbox.net:9345 # Uncomment when joining to a cluster
-token: <token>
+# token: <token>
 
 # Critical matching values (defaults)
 cluster-cidr: "10.42.0.0/16"
