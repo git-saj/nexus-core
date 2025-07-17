@@ -47,17 +47,17 @@ get_vault_pods() {
     kubectl get pods -n "$VAULT_NAMESPACE" -l app.kubernetes.io/name=vault -o jsonpath='{.items[*].metadata.name}' 2>/dev/null || echo ""
 }
 
-# Check if Vault pod is ready
+# Check if Vault pod is ready (running, even if sealed)
 is_pod_ready() {
     local pod_name="$1"
-    kubectl get pod -n "$VAULT_NAMESPACE" "$pod_name" -o jsonpath='{.status.conditions[?(@.type=="Ready")].status}' 2>/dev/null | grep -q "True"
+    kubectl get pod -n "$VAULT_NAMESPACE" "$pod_name" -o jsonpath='{.status.phase}' 2>/dev/null | grep -q "Running"
 }
 
 # Check Vault status
 check_vault_status() {
     local pod_name="$1"
     if ! is_pod_ready "$pod_name"; then
-        echo "not_ready"
+        echo "not_running"
         return
     fi
 
@@ -113,7 +113,7 @@ unseal_vault_pod() {
     log "Checking status of Vault pod: $pod_name"
 
     if ! is_pod_ready "$pod_name"; then
-        warn "Pod $pod_name is not ready, skipping"
+        warn "Pod $pod_name is not running, skipping"
         return 1
     fi
 
@@ -129,8 +129,8 @@ unseal_vault_pod() {
         "sealed")
             log "Pod $pod_name is sealed, attempting to unseal..."
             ;;
-        "not_ready")
-            warn "Pod $pod_name is not ready, skipping"
+        "not_running")
+            warn "Pod $pod_name is not running, skipping"
             return 1
             ;;
         *)
@@ -208,7 +208,7 @@ wait_for_pods() {
     local max_attempts=30
     local attempt=1
 
-    log "Waiting for Vault pods to be ready..."
+    log "Waiting for Vault pods to be running..."
 
     while [ $attempt -le $max_attempts ]; do
         local vault_pods
@@ -221,25 +221,25 @@ wait_for_pods() {
             continue
         fi
 
-        local all_ready=true
+        local all_running=true
         for pod in $vault_pods; do
             if ! is_pod_ready "$pod"; then
-                all_ready=false
+                all_running=false
                 break
             fi
         done
 
-        if $all_ready; then
-            success "All Vault pods are ready"
+        if $all_running; then
+            success "All Vault pods are running"
             return 0
         fi
 
-        log "Waiting for pods to be ready... (attempt $attempt/$max_attempts)"
+        log "Waiting for pods to be running... (attempt $attempt/$max_attempts)"
         sleep 10
         ((attempt++))
     done
 
-    error "Vault pods failed to become ready after $max_attempts attempts"
+    error "Vault pods failed to start running after $max_attempts attempts"
 }
 
 # Show Vault cluster status
@@ -263,8 +263,8 @@ show_status() {
             "sealed")
                 echo -e "  ${RED}✗${NC} $pod: sealed"
                 ;;
-            "not_ready")
-                echo -e "  ${YELLOW}!${NC} $pod: not ready"
+            "not_running")
+                echo -e "  ${YELLOW}!${NC} $pod: not running"
                 ;;
             *)
                 echo -e "  ${YELLOW}?${NC} $pod: unknown status"
