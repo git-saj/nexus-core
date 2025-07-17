@@ -92,7 +92,7 @@ echo "✅ Policy 'external-secrets' created"
 # Create role for External Secrets Operator
 echo "👤 Creating Vault role for External Secrets Operator..."
 kubectl exec -n "${VAULT_NAMESPACE}" "${VAULT_POD}" -- env VAULT_ADDR="http://127.0.0.1:8200" VAULT_TOKEN="${ROOT_TOKEN}" vault write auth/kubernetes/role/external-secrets \
-    bound_service_account_names=external-secrets \
+    bound_service_account_names=external-secrets-system-external-secrets \
     bound_service_account_namespaces=external-secrets-system \
     policies=external-secrets \
     ttl=24h
