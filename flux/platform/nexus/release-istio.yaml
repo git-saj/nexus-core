@@ -43,7 +43,6 @@ spec:
   targetNamespace: istio-system
   values:
     global:
-      profile: default # Full features; change to 'minimal' if needed
       multiCluster: false
       meshID: mesh1
       network: network1
