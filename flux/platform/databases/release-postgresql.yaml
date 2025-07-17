@@ -113,7 +113,11 @@ spec:
         enabled: false
 
     # External secrets integration
-    existingSecret: "postgresql-credentials"
+    auth:
+      existingSecret: "postgresql-credentials"
+      secretKeys:
+        adminPasswordKey: "postgres-password"
+        replicationPasswordKey: "repmgr-password"
 
     # Volume permissions (for Longhorn)
     volumePermissions:
