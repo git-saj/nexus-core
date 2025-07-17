@@ -4,5 +4,3 @@ resources:
   - release-istio.yaml
   - release-longhorn.yaml
   - release-vault.yaml
-  - externalsecret-postgresql.yaml
-  - externalsecret-redis.yaml
