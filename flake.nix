@@ -148,6 +148,7 @@
           alejandra # Nix code formatter
           statix # Lints and suggestions for the Nix programming language
           cilium-cli
+          openssl
         ];
 
         shellHook = ''

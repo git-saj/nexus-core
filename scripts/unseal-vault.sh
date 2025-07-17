@@ -2,10 +2,11 @@
 set -eo pipefail
 
 # Vault unsealing automation script for nexus-core cluster
-# This script automates the unsealing process for Vault pods
+# This script automates: init (if needed), Raft join (if needed), unseal (if needed), and status display.
 
 VAULT_NAMESPACE="vault-system"
 UNSEAL_KEYS_FILE="${HOME}/.vault-unseal-keys"
+ROOT_TOKEN_FILE="${HOME}/.vault-root-token"
 
 # Colors for output
 RED='\033[0;31m'
@@ -31,7 +32,7 @@ success() {
     echo -e "${GREEN}[SUCCESS]${NC} $1"
 }
 
-# Check if kubectl is available
+# Check if kubectl is available and namespace exists
 check_prerequisites() {
     if ! command -v kubectl &> /dev/null; then
         error "kubectl is not installed or not in PATH"
@@ -42,18 +43,21 @@ check_prerequisites() {
     fi
 }
 
-# Get Vault pods
+# Get Vault pods as array
 get_vault_pods() {
-    kubectl get pods -n "$VAULT_NAMESPACE" -l app.kubernetes.io/name=vault -o jsonpath='{.items[*].metadata.name}' 2>/dev/null || echo ""
+    local pods
+    pods=$(kubectl get pods -n "$VAULT_NAMESPACE" -l app.kubernetes.io/name=vault -o jsonpath='{.items[*].metadata.name}' 2>/dev/null || echo "")
+    read -ra pod_array <<< "$pods"
+    echo "${pod_array[@]}"
 }
 
-# Check if Vault pod is ready (running, even if sealed)
+# Check if Vault pod is running
 is_pod_ready() {
     local pod_name="$1"
     kubectl get pod -n "$VAULT_NAMESPACE" "$pod_name" -o jsonpath='{.status.phase}' 2>/dev/null | grep -q "Running"
 }
 
-# Check Vault status
+# Check Vault status (sealed/unsealed/initialized)
 check_vault_status() {
     local pod_name="$1"
     if ! is_pod_ready "$pod_name"; then
@@ -61,11 +65,12 @@ check_vault_status() {
         return
     fi
 
-    # Check vault status using simple text parsing
     local vault_output
     vault_output=$(kubectl exec -n "$VAULT_NAMESPACE" "$pod_name" -- vault status 2>&1 || true)
 
-    if echo "$vault_output" | grep -q "Sealed.*false"; then
+    if echo "$vault_output" | grep -q "Initialized.*false"; then
+        echo "uninitialized"
+    elif echo "$vault_output" | grep -q "Sealed.*false"; then
         echo "unsealed"
     elif echo "$vault_output" | grep -q "Sealed.*true"; then
         echo "sealed"
@@ -74,155 +79,152 @@ check_vault_status() {
     fi
 }
 
-# Initialize Vault if needed
+# Initialize Vault on the leader pod if needed
 initialize_vault() {
-    local pod_name="$1"
+    local leader_pod="$1"
 
-    log "Checking if Vault needs initialization on pod $pod_name..."
+    log "Checking if Vault needs initialization on leader pod $leader_pod..."
 
-    # Check if vault is initialized by trying to read status
-    local vault_output
-    vault_output=$(kubectl exec -n "$VAULT_NAMESPACE" "$pod_name" -- vault status 2>&1 || true)
+    local status
+    status=$(check_vault_status "$leader_pod")
 
-    if echo "$vault_output" | grep -q "Vault is not initialized"; then
-        log "Vault is not initialized. Initializing..."
+    if [ "$status" = "uninitialized" ]; then
+        if [ -f "$UNSEAL_KEYS_FILE" ]; then
+            warn "Unseal keys file exists, but Vault is uninitialized. Overwriting files."
+        fi
 
+        log "Initializing Vault..."
         local init_output
-        init_output=$(kubectl exec -n "$VAULT_NAMESPACE" "$pod_name" -- vault operator init -key-shares=5 -key-threshold=3)
+        init_output=$(kubectl exec -n "$VAULT_NAMESPACE" "$leader_pod" -- vault operator init -key-shares=5 -key-threshold=3)
 
-        # Extract unseal keys and root token from text output
         echo "$init_output" | grep "Unseal Key" | awk '{print $4}' > "$UNSEAL_KEYS_FILE"
-        echo "$init_output" | grep "Initial Root Token:" | awk '{print $4}' > "${HOME}/.vault-root-token"
+        echo "$init_output" | grep "Initial Root Token:" | awk '{print $4}' > "$ROOT_TOKEN_FILE"
 
-        chmod 600 "$UNSEAL_KEYS_FILE" "${HOME}/.vault-root-token"
+        chmod 600 "$UNSEAL_KEYS_FILE" "$ROOT_TOKEN_FILE"
 
         success "Vault initialized. Unseal keys saved to $UNSEAL_KEYS_FILE"
-        success "Root token saved to ${HOME}/.vault-root-token"
-
+        success "Root token saved to $ROOT_TOKEN_FILE"
         return 0
     else
-        log "Vault is already initialized"
+        log "Vault is already initialized."
         return 1
     fi
+}
+
+# Join a follower pod to Raft cluster
+join_raft() {
+    local pod_name="$1"
+    local leader_pod="$2"
+    local leader_addr="http://${leader_pod}.vault-internal:8200"  # Adjust if service name differs
+
+    log "Attempting to join $pod_name to Raft cluster using leader $leader_pod..."
+
+    local attempts=3
+    local attempt=1
+    while [ $attempt -le $attempts ]; do
+        if kubectl exec -n "$VAULT_NAMESPACE" "$pod_name" -- vault operator raft join "$leader_addr" >/dev/null 2>&1; then
+            success "$pod_name joined Raft cluster."
+            sleep 3  # Wait for status update
+            return 0
+        fi
+        warn "Join attempt $attempt/$attempts failed for $pod_name."
+        sleep $((2 ** attempt))  # Exponential backoff
+        ((attempt++))
+    done
+    warn "Failed to join $pod_name to Raft after $attempts attempts."
+    return 1
 }
 
 # Unseal a single Vault pod
 unseal_vault_pod() {
     local pod_name="$1"
 
-    log "Checking status of Vault pod: $pod_name"
+    log "Processing Vault pod: $pod_name"
 
     if ! is_pod_ready "$pod_name"; then
-        warn "Pod $pod_name is not running, skipping"
+        warn "Pod $pod_name is not running, skipping."
         return 1
     fi
 
-    local vault_status
-    vault_status=$(check_vault_status "$pod_name")
+    local status
+    status=$(check_vault_status "$pod_name")
 
-    case "$vault_status" in
-        "unsealed")
-            success "Pod $pod_name is already unsealed"
-            log "Continuing to next pod..."
-            return 0
-            ;;
-        "sealed")
-            log "Pod $pod_name is sealed, attempting to unseal..."
-            ;;
-        "not_running")
-            warn "Pod $pod_name is not running, skipping"
-            return 1
-            ;;
-        *)
-            warn "Unknown status for pod $pod_name, attempting to unseal anyway..."
-            ;;
-    esac
-
-    # Check if unseal keys file exists
-    if [ ! -f "$UNSEAL_KEYS_FILE" ]; then
-        # Try to initialize if no keys exist
-        if initialize_vault "$pod_name"; then
-            log "Proceeding with unseal after initialization..."
-        else
-            error "Unseal keys file not found at $UNSEAL_KEYS_FILE and Vault is already initialized. Please provide unseal keys manually."
-        fi
+    if [ "$status" = "unsealed" ]; then
+        success "Pod $pod_name is already unsealed."
+        return 0
+    elif [ "$status" != "sealed" ] && [ "$status" != "uninitialized" ] && [ "$status" != "unknown" ]; then
+        warn "Unknown status for pod $pod_name, skipping."
+        return 1
     fi
 
-    # Read unseal keys (first 3 keys are needed for threshold of 3)
+    log "Pod $pod_name needs unsealing."
+
+    if [ ! -f "$UNSEAL_KEYS_FILE" ]; then
+        error "Unseal keys file not found at $UNSEAL_KEYS_FILE. Run initialization first."
+    fi
+
     local unseal_keys
     mapfile -t unseal_keys < <(head -n 3 "$UNSEAL_KEYS_FILE" 2>/dev/null || echo "")
 
     if [ ${#unseal_keys[@]} -lt 3 ]; then
-        error "Insufficient unseal keys found in $UNSEAL_KEYS_FILE. Need at least 3 keys."
+        error "Insufficient unseal keys in $UNSEAL_KEYS_FILE (need at least 3)."
     fi
 
-    # Unseal the pod
     local success_count=0
     for key in "${unseal_keys[@]}"; do
         if [ -n "$key" ]; then
-            log "Applying unseal key $((success_count + 1))/3 to pod $pod_name..."
-            set +e  # Don't exit on kubectl failure
-            kubectl exec -n "$VAULT_NAMESPACE" "$pod_name" -- vault operator unseal "$key" > /dev/null 2>&1
-            local unseal_result=$?
-            set -e
-
-            if [ $unseal_result -eq 0 ]; then
-                ((success_count++))
-                log "Unseal key ${success_count}/3 applied successfully"
-            else
-                warn "Failed to apply unseal key $((success_count + 1))"
+            log "Applying unseal key $((success_count + 1))/3 to $pod_name..."
+            local attempts=3
+            local attempt=1
+            while [ $attempt -le $attempts ]; do
+                if timeout 30 kubectl exec -n "$VAULT_NAMESPACE" "$pod_name" -- vault operator unseal "$key" >/dev/null 2>&1; then
+                    ((success_count++))
+                    log "Key $success_count/3 applied successfully."
+                    break
+                fi
+                warn "Apply attempt $attempt/$attempts failed (may retry)."
+                sleep $((2 ** attempt))
+                ((attempt++))
+            done
+            if [ $attempt -gt $attempts ]; then
+                warn "Failed to apply key $((success_count + 1)) after retries."
             fi
+            sleep 1
         fi
     done
 
-    # Check final status
     sleep 2
-    vault_status=$(check_vault_status "$pod_name")
-    if [ "$vault_status" = "unsealed" ]; then
-        success "Pod $pod_name is now unsealed"
+    status=$(check_vault_status "$pod_name")
+    if [ "$status" = "unsealed" ]; then
+        success "Pod $pod_name is now unsealed."
         return 0
     else
-        warn "Failed to unseal pod $pod_name after applying keys"
+        warn "Failed to unseal $pod_name."
         return 1
     fi
 }
 
-# Join raft peers (for HA setup)
-join_raft_peers() {
-    local vault_pods=("$@")
-    local leader_pod="${vault_pods[0]}"
-
-    log "Setting up Raft cluster with leader: $leader_pod"
-
-    # Skip the first pod (leader)
-    for pod in "${vault_pods[@]:1}"; do
-        if is_pod_ready "$pod"; then
-            log "Joining $pod to Raft cluster..."
-            kubectl exec -n "$VAULT_NAMESPACE" "$pod" -- vault operator raft join "http://${leader_pod}.vault-internal:8200" || warn "Failed to join $pod to cluster (may already be joined)"
-        fi
-    done
-}
-
-# Wait for all pods to be ready
+# Wait for all pods to be ready with exponential backoff
 wait_for_pods() {
     local max_attempts=30
     local attempt=1
+    local delay=5
 
     log "Waiting for Vault pods to be running..."
 
     while [ $attempt -le $max_attempts ]; do
-        local vault_pods
-        vault_pods=$(get_vault_pods)
-
-        if [ -z "$vault_pods" ]; then
+        local vault_pods=($(get_vault_pods))
+        if [ ${#vault_pods[@]} -eq 0 ]; then
             log "No Vault pods found, waiting... (attempt $attempt/$max_attempts)"
-            sleep 10
+            sleep "$delay"
+            delay=$((delay * 2))  # Exponential backoff, max 60s
+            [ $delay -gt 60 ] && delay=60
             ((attempt++))
             continue
         fi
 
         local all_running=true
-        for pod in $vault_pods; do
+        for pod in "${vault_pods[@]}"; do
             if ! is_pod_ready "$pod"; then
                 all_running=false
                 break
@@ -230,153 +232,99 @@ wait_for_pods() {
         done
 
         if $all_running; then
-            success "All Vault pods are running"
+            success "All ${#vault_pods[@]} Vault pods are running."
             return 0
         fi
 
-        log "Waiting for pods to be running... (attempt $attempt/$max_attempts)"
-        sleep 10
+        log "Waiting... (attempt $attempt/$max_attempts)"
+        sleep "$delay"
+        delay=$((delay * 2))
+        [ $delay -gt 60 ] && delay=60
         ((attempt++))
     done
 
-    error "Vault pods failed to start running after $max_attempts attempts"
+    error "Vault pods failed to become running after $max_attempts attempts."
 }
 
 # Show Vault cluster status
 show_status() {
-    local vault_pods
-    vault_pods=$(get_vault_pods)
-
-    if [ -z "$vault_pods" ]; then
-        warn "No Vault pods found"
+    local vault_pods=($(get_vault_pods))
+    if [ ${#vault_pods[@]} -eq 0 ]; then
+        warn "No Vault pods found."
         return
     fi
 
     log "Vault cluster status:"
-    for pod in $vault_pods; do
+    for pod in "${vault_pods[@]}"; do
         local status
         status=$(check_vault_status "$pod")
         case "$status" in
-            "unsealed")
-                echo -e "  ${GREEN}✓${NC} $pod: unsealed"
-                ;;
-            "sealed")
-                echo -e "  ${RED}✗${NC} $pod: sealed"
-                ;;
-            "not_running")
-                echo -e "  ${YELLOW}!${NC} $pod: not running"
-                ;;
-            *)
-                echo -e "  ${YELLOW}?${NC} $pod: unknown status"
-                ;;
+            "unsealed") echo -e "  ${GREEN}✓${NC} $pod: unsealed" ;;
+            "sealed") echo -e "  ${RED}✗${NC} $pod: sealed" ;;
+            "uninitialized") echo -e "  ${YELLOW}!${NC} $pod: uninitialized" ;;
+            "not_running") echo -e "  ${YELLOW}!${NC} $pod: not running" ;;
+            *) echo -e "  ${YELLOW}?${NC} $pod: unknown" ;;
         esac
     done
 }
 
-# Main unsealing process
-unseal_vault() {
-    log "Starting Vault unsealing process..."
+# Main process: init → join → unseal → status
+main() {
+    log "Starting Vault automation process..."
 
     check_prerequisites
     wait_for_pods
 
-    local vault_pods
-    vault_pods=$(get_vault_pods)
-
-    if [ -z "$vault_pods" ]; then
-        error "No Vault pods found"
+    local vault_pods=($(get_vault_pods))
+    if [ ${#vault_pods[@]} -eq 0 ]; then
+        error "No Vault pods found."
     fi
 
-    # Convert space-separated string to array
-    local vault_pods_array
-    read -ra vault_pods_array <<< "$vault_pods"
+    log "Found ${#vault_pods[@]} Vault pod(s): ${vault_pods[*]}"
 
-    log "Found ${#vault_pods_array[@]} Vault pod(s): ${vault_pods_array[*]}"
-    log "Starting pod processing loop..."
+    # Assume first pod is leader (sort alphabetically if needed: sort -V)
+    local leader_pod="${vault_pods[0]}"
 
-    # Unseal each pod
+    # Init if needed (only on leader)
+    initialize_vault "$leader_pod"
+
+    # Join followers to Raft if needed (skip leader)
+    if [ ${#vault_pods[@]} -gt 1 ]; then
+        log "Handling Raft joins for followers..."
+        for pod in "${vault_pods[@]:1}"; do
+            local status=$(check_vault_status "$pod")
+            if [ "$status" = "uninitialized" ] || [ "$status" = "unknown" ]; then
+                join_raft "$pod" "$leader_pod"
+            else
+                log "$pod already part of cluster or initialized."
+            fi
+        done
+    fi
+
+    # Unseal all pods if needed
+    log "Handling unsealing for all pods..."
     local unsealed_count=0
-    local pod_index=1
-    for pod in "${vault_pods_array[@]}"; do
-        log "Processing pod $pod_index/${#vault_pods_array[@]}: $pod"
-
-        # Process pod with explicit error handling
-        local result=0
-        set +e
-        unseal_vault_pod "$pod"
-        result=$?
-        set -e
-
-        if [ $result -eq 0 ]; then
-            unsealed_count=$((unsealed_count + 1))
-            log "Successfully processed pod $pod ($unsealed_count unsealed so far)"
-        else
-            warn "Failed to process pod $pod (exit code: $result), but continuing with other pods"
+    for pod in "${vault_pods[@]}"; do
+        if unseal_vault_pod "$pod"; then
+            ((unsealed_count++))
         fi
-        pod_index=$((pod_index + 1))
-        log "Finished processing pod $pod"
-        echo "---"
     done
 
-    log "Completed processing all pods. Total processed: $unsealed_count out of ${#vault_pods_array[@]}"
-
     if [ $unsealed_count -gt 0 ]; then
-        log "Setting up Raft cluster relationships..."
-        join_raft_peers "${vault_pods_array[@]}"
+        success "Unsealed $unsealed_count out of ${#vault_pods[@]} pods."
+    elif [ $unsealed_count -eq 0 ] && [ ${#vault_pods[@]} -gt 0 ]; then
+        success "All pods were already unsealed."
+    fi
 
-        success "Unsealed $unsealed_count out of ${#vault_pods_array[@]} Vault pods"
-        show_status
+    show_status
 
-        if [ -f "${HOME}/.vault-root-token" ]; then
-            log "Root token available at: ${HOME}/.vault-root-token"
-            log "To access Vault, run:"
-            log "  export VAULT_TOKEN=\$(cat ${HOME}/.vault-root-token)"
-            log "  kubectl port-forward -n vault-system svc/vault 8200:8200"
-            log "  export VAULT_ADDR=http://localhost:8200"
-        fi
-    else
-        warn "Failed to unseal any Vault pods"
+    if [ -f "$ROOT_TOKEN_FILE" ]; then
+        log "Root token available at: $ROOT_TOKEN_FILE"
+        log "To access Vault, run:"
+        log "  export VAULT_TOKEN=\$(cat $ROOT_TOKEN_FILE)"
+        log "  kubectl port-forward -n $VAULT_NAMESPACE svc/vault 8200:8200"
+        log "  export VAULT_ADDR=http://localhost:8200"
     fi
 }
 
-# Script usage
-usage() {
-    echo "Usage: $0 [command]"
-    echo ""
-    echo "Commands:"
-    echo "  unseal    Unseal all Vault pods (default)"
-    echo "  status    Show current Vault cluster status"
-    echo "  init      Initialize Vault (first time setup)"
-    echo "  help      Show this help message"
-    echo ""
-    echo "Environment variables:"
-    echo "  VAULT_NAMESPACE      Vault namespace (default: vault-system)"
-    echo "  UNSEAL_KEYS_FILE     Path to unseal keys file (default: ~/.vault-unseal-keys)"
-}
-
-# Main execution
-case "${1:-unseal}" in
-    "unseal")
-        unseal_vault
-        ;;
-    "status")
-        check_prerequisites
-        show_status
-        ;;
-    "init")
-        check_prerequisites
-        vault_pods=$(get_vault_pods)
-        if [ -n "$vault_pods" ]; then
-            first_pod=$(echo "$vault_pods" | cut -d' ' -f1)
-            initialize_vault "$first_pod"
-        else
-            error "No Vault pods found"
-        fi
-        ;;
-    "help"|"-h"|"--help")
-        usage
-        ;;
-    *)
-        error "Unknown command: $1. Use 'help' for usage information."
-        ;;
-esac
+main
