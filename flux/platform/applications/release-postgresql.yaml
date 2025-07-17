@@ -68,7 +68,7 @@ spec:
 
       # Monitoring configuration
       monitoring:
-        enabled: true
+        enabled: false
 
       # Affinity to spread replicas across 2 nodes
       affinity:
