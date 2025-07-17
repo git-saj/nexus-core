@@ -63,7 +63,7 @@ spec:
 
     # Replica configuration
     replica:
-      replicaCount: 1  # 1 replica for 2-node setup
+      replicaCount: 1 # 1 replica for 2-node setup
 
       # Resource limits
       resources:
@@ -84,11 +84,11 @@ spec:
       affinity:
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
-          - labelSelector:
-              matchLabels:
-                app.kubernetes.io/name: redis
-                app.kubernetes.io/component: master
-            topologyKey: kubernetes.io/hostname
+            - labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: redis
+                  app.kubernetes.io/component: master
+              topologyKey: kubernetes.io/hostname
 
     # Sentinel configuration for HA
     sentinel:
@@ -150,7 +150,7 @@ spec:
       automountServiceAccountToken: false
 
 ---
-apiVersion: external-secrets.io/v1beta1
+apiVersion: external-secrets.io/v1
 kind: ExternalSecret
 metadata:
   name: redis-credentials
@@ -168,7 +168,7 @@ spec:
       data:
         password: "{{ .password }}"
   data:
-  - secretKey: password
-    remoteRef:
-      key: database/redis
-      property: password
+    - secretKey: password
+      remoteRef:
+        key: database/redis
+        property: password

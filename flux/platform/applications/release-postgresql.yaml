@@ -138,7 +138,7 @@ spec:
     # Init scripts (can be used for database initialization)
     initdbScripts: {}
 ---
-apiVersion: external-secrets.io/v1beta1
+apiVersion: external-secrets.io/v1
 kind: ExternalSecret
 metadata:
   name: postgresql-credentials
