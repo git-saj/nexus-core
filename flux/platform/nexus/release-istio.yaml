@@ -96,7 +96,7 @@ spec:
     - name: istiod
   chart:
     spec:
-      chart: istio-ingress
+      chart: gateway
       version: "1.26.2"
       sourceRef:
         kind: HelmRepository
@@ -129,7 +129,7 @@ spec:
     - name: istiod
   chart:
     spec:
-      chart: istio-ingress
+      chart: gateway
       version: "1.26.2"
       sourceRef:
         kind: HelmRepository
