@@ -1,0 +1,174 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: redis-ha
+  namespace: flux-system
+spec:
+  interval: 10m
+  chart:
+    spec:
+      chart: redis
+      version: ">=18.0.0"
+      sourceRef:
+        kind: HelmRepository
+        name: bitnami
+  targetNamespace: redis-system
+  install:
+    createNamespace: true
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  values:
+    # Architecture: replication for HA
+    architecture: replication
+
+    # Authentication
+    auth:
+      enabled: true
+      existingSecret: "redis-credentials"
+      existingSecretPasswordKey: "password"
+
+    # Master configuration
+    master:
+      count: 1
+
+      # Resource limits for homelab
+      resources:
+        requests:
+          cpu: 100m
+          memory: 256Mi
+        limits:
+          cpu: 500m
+          memory: 512Mi
+
+      # Persistence
+      persistence:
+        enabled: true
+        storageClass: "longhorn"
+        size: 8Gi
+
+      # Security context
+      securityContext:
+        enabled: true
+        fsGroup: 1001
+        runAsUser: 1001
+
+      # Service configuration
+      service:
+        type: ClusterIP
+        ports:
+          redis: 6379
+
+    # Replica configuration
+    replica:
+      replicaCount: 1  # 1 replica for 2-node setup
+
+      # Resource limits
+      resources:
+        requests:
+          cpu: 100m
+          memory: 256Mi
+        limits:
+          cpu: 500m
+          memory: 512Mi
+
+      # Persistence
+      persistence:
+        enabled: true
+        storageClass: "longhorn"
+        size: 8Gi
+
+      # Pod anti-affinity to spread across nodes
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchLabels:
+                app.kubernetes.io/name: redis
+                app.kubernetes.io/component: master
+            topologyKey: kubernetes.io/hostname
+
+    # Sentinel configuration for HA
+    sentinel:
+      enabled: true
+
+      # Resource limits
+      resources:
+        requests:
+          cpu: 50m
+          memory: 128Mi
+        limits:
+          cpu: 250m
+          memory: 256Mi
+
+      # Service configuration
+      service:
+        type: ClusterIP
+        ports:
+          sentinel: 26379
+
+      # Persistence for sentinel
+      persistence:
+        enabled: true
+        storageClass: "longhorn"
+        size: 2Gi
+
+    # Redis configuration
+    commonConfiguration: |-
+      # Redis common configuration
+      save 900 1
+      save 300 10
+      save 60 10000
+      tcp-keepalive 60
+      maxmemory-policy allkeys-lru
+      # Disable dangerous commands
+      rename-command FLUSHDB ""
+      rename-command FLUSHALL ""
+      rename-command DEBUG ""
+
+    # Volume permissions (for Longhorn)
+    volumePermissions:
+      enabled: true
+      securityContext:
+        runAsUser: 0
+
+    # Metrics (enable if you have monitoring)
+    metrics:
+      enabled: false
+      serviceMonitor:
+        enabled: false
+
+    # Network policy (optional)
+    networkPolicy:
+      enabled: false
+
+    # Service account
+    serviceAccount:
+      create: true
+      automountServiceAccountToken: false
+
+---
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: redis-credentials
+  namespace: redis-system
+spec:
+  refreshInterval: 30s
+  secretStoreRef:
+    name: vault-backend
+    kind: ClusterSecretStore
+  target:
+    name: redis-credentials
+    creationPolicy: Owner
+    template:
+      type: Opaque
+      data:
+        password: "{{ .password }}"
+  data:
+  - secretKey: password
+    remoteRef:
+      key: database/redis
+      property: password
