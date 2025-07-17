@@ -34,6 +34,7 @@ in {
     "root"
     "s0010054j"
   ];
+  programs.nix-ld.enable = true;
 
   security.pam.services.sddm.enableKwallet = true;
 
@@ -88,7 +89,7 @@ in {
       vim
       vlc
       wget
-      unstable.zed-editor-fhs
+      master.zed-editor-fhs
       unstable.package-version-server
       neovim
       tmux

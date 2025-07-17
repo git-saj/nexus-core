@@ -3,3 +3,4 @@ kind: Kustomization
 resources:
   - configuration-metallb.yaml
   - vault-clustersecretstore.yaml
+  - namespaces.yaml

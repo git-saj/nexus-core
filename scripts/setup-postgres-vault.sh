@@ -66,14 +66,10 @@ kubectl exec -n "${VAULT_NAMESPACE}" "${VAULT_POD}" -- env VAULT_ADDR="http://12
     echo "✅ Kubernetes auth method enabled"
 }
 
-# Get service account token for auth config
-SA_TOKEN=$(kubectl create token default -n "${VAULT_NAMESPACE}")
-
 # Configure Kubernetes auth
 kubectl exec -n "${VAULT_NAMESPACE}" "${VAULT_POD}" -- env VAULT_ADDR="http://127.0.0.1:8200" VAULT_TOKEN="${ROOT_TOKEN}" vault write auth/kubernetes/config \
-    token_reviewer_jwt="${SA_TOKEN}" \
     kubernetes_host="https://kubernetes.default.svc:443" \
-    kubernetes_ca_cert="$(kubectl exec -n "${VAULT_NAMESPACE}" "${VAULT_POD}" -- cat /var/run/secrets/kubernetes.io/serviceaccount/ca.crt)"
+    kubernetes_ca_cert="@/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
 
 echo "✅ Kubernetes auth configured"
 

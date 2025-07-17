@@ -16,6 +16,7 @@
     # nix
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    nixpkgs-master.url = "github:nixos/nixpkgs/master";
     systems.url = "github:nix-systems/default-linux";
     hardware.url = "github:nixos/nixos-hardware";
 
@@ -36,6 +37,7 @@
     self,
     nixpkgs,
     nixpkgs-unstable,
+    nixpkgs-master,
     systems,
     deploy-rs,
     ...
@@ -46,6 +48,10 @@
     # Define the unstable overlay
     overlay-unstable = final: prev: {
       unstable = import nixpkgs-unstable {
+        inherit (prev) system;
+        config.allowUnfree = true;
+      };
+      master = import nixpkgs-master {
         inherit (prev) system;
         config.allowUnfree = true;
       };
