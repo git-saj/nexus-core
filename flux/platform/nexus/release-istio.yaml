@@ -94,6 +94,7 @@ spec:
   interval: 10m
   dependsOn:
     - name: istiod
+    - name: metallb
   chart:
     spec:
       chart: gateway
@@ -127,6 +128,7 @@ spec:
   interval: 10m
   dependsOn:
     - name: istiod
+    - name: metallb
   chart:
     spec:
       chart: gateway

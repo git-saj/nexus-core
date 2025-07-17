@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - ../_base/helm
   - release-metallb.yaml
+  - configuration-metallb.yaml
   - release-istio.yaml
   - release-longhorn.yaml
   - release-vault.yaml
