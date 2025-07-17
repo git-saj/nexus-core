@@ -12,7 +12,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: hashicorp
-  targetNamespace: platform-vault
+  targetNamespace: vault-system
   install:
     createNamespace: true
     remediation:

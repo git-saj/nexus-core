@@ -2,6 +2,8 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - ../_base/helm
+  - release-metallb.yaml
+  - release-istio.yaml
   - release-longhorn.yaml
-  - release-podinfo.yaml
   - release-vault.yaml
+  - configuration-metallb.yaml

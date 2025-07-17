@@ -14,11 +14,11 @@ spec:
         kind: HelmRepository
         name: longhorn
   releaseName: longhorn
-  targetNamespace: platform-longhorn
+  targetNamespace: longhorn-system
   install:
+    createNamespace: true
     remediation:
       retries: 3
-    createNamespace: true
   upgrade:
     remediation:
       retries: 3
