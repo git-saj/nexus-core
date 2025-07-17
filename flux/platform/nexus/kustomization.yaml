@@ -6,4 +6,3 @@ resources:
   - release-istio.yaml
   - release-longhorn.yaml
   - release-vault.yaml
-  - configuration-metallb.yaml
