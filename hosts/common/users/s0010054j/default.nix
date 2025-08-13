@@ -76,7 +76,7 @@ in {
       "libvirtd"
     ];
     packages = with pkgs; [
-      (azure-cli.withExtensions [azure-cli.extensions.aks-preview])
+      (azure-cli.withExtensions [azure-cli.extensions.aks-preview azure-cli.extensions.resource-graph])
       kubectl
       chromium
       devpod
@@ -89,12 +89,15 @@ in {
       vim
       vlc
       wget
+      pre-commit
       master.zed-editor-fhs
       unstable.package-version-server
       neovim
       tmux
       ripgrep
       thefuck
+      teamspeak6-client
+      jq
     ];
   };
 }
