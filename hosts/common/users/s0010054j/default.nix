@@ -98,6 +98,9 @@ in {
       thefuck
       teamspeak6-client
       jq
+      postgresql
+      bruno
+      openssl
     ];
   };
 }
