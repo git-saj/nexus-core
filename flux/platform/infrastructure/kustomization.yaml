@@ -3,5 +3,4 @@ kind: Kustomization
 resources:
   - _base/helm
   - release-metallb.yaml
-  - release-external-secrets.yaml
   - release-cnpg.yaml

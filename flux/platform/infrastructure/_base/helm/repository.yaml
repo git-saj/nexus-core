@@ -28,42 +28,6 @@ spec:
 apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: HelmRepository
 metadata:
-  name: bitnami
-  namespace: flux-system
-spec:
-  interval: 10m
-  url: https://charts.bitnami.com/bitnami
----
-apiVersion: source.toolkit.fluxcd.io/v1beta2
-kind: HelmRepository
-metadata:
-  name: external-secrets
-  namespace: flux-system
-spec:
-  interval: 10m
-  url: https://charts.external-secrets.io
----
-apiVersion: source.toolkit.fluxcd.io/v1beta2
-kind: HelmRepository
-metadata:
-  name: redis-operator
-  namespace: flux-system
-spec:
-  interval: 10m
-  url: https://spotahome.github.io/redis-operator
----
-apiVersion: source.toolkit.fluxcd.io/v1beta2
-kind: HelmRepository
-metadata:
-  name: hashicorp
-  namespace: flux-system
-spec:
-  interval: 10m
-  url: https://helm.releases.hashicorp.com
----
-apiVersion: source.toolkit.fluxcd.io/v1beta2
-kind: HelmRepository
-metadata:
   name: cnpg
   namespace: flux-system
 spec:
