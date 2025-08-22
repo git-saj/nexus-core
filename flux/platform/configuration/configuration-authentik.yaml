@@ -7,7 +7,6 @@ spec:
   parentRefs:
     - name: ext-gateway
       namespace: gateway-api-system
-      sectionName: https
   hostnames:
     - "saj.sh"
   rules:
