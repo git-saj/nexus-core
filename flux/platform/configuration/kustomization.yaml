@@ -4,3 +4,4 @@ resources:
   - configuration-metallb.yaml
   - configuration-cert-manager.yaml
   - configuration-gateway-api.yaml
+  - configuration-authentik.yaml
