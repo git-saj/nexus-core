@@ -33,26 +33,12 @@ spec:
       name: ext-gateway-options
   listeners:
     - name: http
-      hostname: "saj.sh"
       port: 80
       protocol: HTTP
       allowedRoutes:
         namespaces:
           from: All
     - name: https
-      hostname: "saj.sh"
-      port: 443
-      protocol: HTTPS
-      tls:
-        mode: Terminate
-        certificateRefs:
-          - name: wildcard-saj-sh-tls
-            kind: Secret
-      allowedRoutes:
-        namespaces:
-          from: All
-    - name: https
-      hostname: "tunnel.saj.sh"
       port: 443
       protocol: HTTPS
       tls:
