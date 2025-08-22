@@ -14,7 +14,7 @@ spec:
         pod: go-media-control
     spec:
       containers:
-        - image: ghcr.io/git-saj/go-media-control:sha-d83d2d5
+        - image: ghcr.io/git-saj/go-media-control:sha-6500f65
           name: go-media-control
           envFrom:
             - secretRef:
