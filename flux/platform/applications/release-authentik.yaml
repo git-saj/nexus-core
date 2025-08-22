@@ -53,8 +53,7 @@ spec:
     authentik:
       enabled: true
       log_level: info
-      # Secret key will be in the separate secrets file
-      secret_key: ""
+      # Secret key will be in the separate secrets file via valuesFrom
 
       events:
         context_processors:
@@ -84,13 +83,13 @@ spec:
         host: "{{ .Release.Name }}-postgresql"
         name: "authentik"
         user: "authentik"
-        password: "" # Will be set in secrets file
+        # password will be set in secrets file
         port: 5432
 
       # Redis configuration - using built-in
       redis:
         host: "{{ .Release.Name }}-redis-master"
-        password: "" # Will be set in secrets file if needed
+        # password will be set in secrets file if needed
 
     # Server configuration
     server:
@@ -222,9 +221,7 @@ spec:
       auth:
         username: authentik
         database: authentik
-        # Password will be set in secrets file
-        password: ""
-        postgresPassword: ""
+        # Passwords will be set in secrets file
 
       primary:
         persistence:
@@ -248,7 +245,7 @@ spec:
       enabled: true
       auth:
         enabled: false
-        password: ""
+        # password will be set in secrets file if needed
 
       master:
         persistence:
