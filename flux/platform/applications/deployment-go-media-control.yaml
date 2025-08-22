@@ -14,39 +14,11 @@ spec:
         pod: go-media-control
     spec:
       containers:
-        - image: ghcr.io/git-saj/go-media-control:latest
+        - image: ghcr.io/git-saj/go-media-control:sha-d83d2d5
           name: go-media-control
-          env:
-            - name: XTREAM_BASEURL
-              valueFrom:
-                secretKeyRef:
-                  name: go-media-control-env
-                  key: XTREAM_BASEURL
-            - name: XTREAM_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: go-media-control-env
-                  key: XTREAM_USERNAME
-            - name: XTREAM_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: go-media-control-env
-                  key: XTREAM_PASSWORD
-            - name: DISCORD_WEBHOOK
-              valueFrom:
-                secretKeyRef:
-                  name: go-media-control-env
-                  key: DISCORD_WEBHOOK
-            - name: COMMAND_PREFIX
-              valueFrom:
-                secretKeyRef:
-                  name: go-media-control-env
-                  key: COMMAND_PREFIX
-            - name: PORT
-              valueFrom:
-                secretKeyRef:
-                  name: go-media-control-env
-                  key: PORT
+          envFrom:
+            - secretRef:
+                name: go-media-control-env
           ports:
             - containerPort: 8080
               name: http
@@ -59,7 +31,7 @@ spec:
               memory: 512Mi
           livenessProbe:
             httpGet:
-              path: /
+              path: /health
               port: 8080
             failureThreshold: 3
             initialDelaySeconds: 30
@@ -67,7 +39,7 @@ spec:
             timeoutSeconds: 10
           readinessProbe:
             httpGet:
-              path: /
+              path: /health
               port: 8080
             failureThreshold: 3
             initialDelaySeconds: 10
