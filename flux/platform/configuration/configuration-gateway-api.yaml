@@ -23,7 +23,7 @@ apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
   name: ext-gateway
-  namespace: istio-system
+  namespace: gateway-api-system
 spec:
   gatewayClassName: istio
   infrastructure:
