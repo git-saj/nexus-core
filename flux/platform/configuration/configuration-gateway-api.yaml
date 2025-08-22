@@ -33,14 +33,14 @@ spec:
       name: ext-gateway-options
   listeners:
     - name: http
-      hostname: "*.saj.sh"
+      hostname: "saj.sh"
       port: 80
       protocol: HTTP
       allowedRoutes:
         namespaces:
           from: All
     - name: https
-      hostname: "*.saj.sh"
+      hostname: "saj.sh"
       port: 443
       protocol: HTTPS
       tls:
