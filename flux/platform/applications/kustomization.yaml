@@ -6,3 +6,4 @@ resources:
   - release-authentik.yaml
   - deployment-cloudflared.yaml
   - deployment-go-media-control.yaml
+  - deployment-discord-video-streamer.yaml

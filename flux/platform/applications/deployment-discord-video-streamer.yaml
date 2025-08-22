@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: discord-video-streamer
+  namespace: discord-video-streamer-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      pod: discord-video-streamer
+  template:
+    metadata:
+      labels:
+        pod: discord-video-streamer
+    spec:
+      containers:
+        - image: ghcr.io/git-saj/discord-video-streamer:main-7389fe7
+          name: discord-video-streamer
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          volumeMounts:
+            - mountPath: /app/config.json
+              name: config-volume
+              subPath: config.json
+              readOnly: true
+      volumes:
+        - name: config-volume
+          secret:
+            secretName: discord-video-streamer-config
