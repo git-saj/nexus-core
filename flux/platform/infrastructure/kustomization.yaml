@@ -4,3 +4,4 @@ resources:
   - _base/helm
   - release-metallb.yaml
   - release-cnpg.yaml
+  - release-cert-manager.yaml
