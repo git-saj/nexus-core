@@ -5,3 +5,4 @@ resources:
   - release-longhorn.yaml
   - release-authentik.yaml
   - deployment-cloudflared.yaml
+  - deployment-go-media-control.yaml
