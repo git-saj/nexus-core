@@ -13,9 +13,6 @@ spec:
   rules:
     - matches:
         - path:
-            type: Exact
-            value: /auth
-        - path:
             type: PathPrefix
             value: /auth/
       backendRefs:
