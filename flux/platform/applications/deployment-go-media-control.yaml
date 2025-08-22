@@ -31,7 +31,7 @@ spec:
               memory: 512Mi
           livenessProbe:
             httpGet:
-              path: /health
+              path: /media/health
               port: 8080
             failureThreshold: 3
             initialDelaySeconds: 30
@@ -39,7 +39,7 @@ spec:
             timeoutSeconds: 10
           readinessProbe:
             httpGet:
-              path: /health
+              path: /media/health
               port: 8080
             failureThreshold: 3
             initialDelaySeconds: 10
