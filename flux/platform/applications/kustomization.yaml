@@ -3,4 +3,4 @@ kind: Kustomization
 resources:
   - release-istio.yaml
   - release-longhorn.yaml
-  - deploy-postgresql.yaml
+  # - deploy-postgresql.yaml
