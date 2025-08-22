@@ -15,12 +15,6 @@ spec:
         - path:
             type: PathPrefix
             value: /media/
-      filters:
-        - type: URLRewrite
-          urlRewrite:
-            path:
-              type: ReplacePrefixMatch
-              replacePrefixMatch: /
       backendRefs:
         - name: go-media-control
           port: 8080
