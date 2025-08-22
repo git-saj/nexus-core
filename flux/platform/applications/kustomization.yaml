@@ -3,4 +3,4 @@ kind: Kustomization
 resources:
   - release-istio.yaml
   - release-longhorn.yaml
-  - release-authentik.yaml
+  # - release-authentik.yaml
