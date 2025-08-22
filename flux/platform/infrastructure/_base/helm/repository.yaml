@@ -44,11 +44,12 @@ spec:
   url: https://charts.goauthentik.io
 ---
 apiVersion: source.toolkit.fluxcd.io/v1beta2
-kind: HelmRepository
+kind: OCIRepository
 metadata:
   name: cert-manager
   namespace: flux-system
 spec:
-  type: oci
   interval: 10m
   url: oci://quay.io/jetstack/charts/cert-manager
+  ref:
+    tag: v1.18.2
