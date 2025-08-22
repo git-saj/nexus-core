@@ -38,14 +38,3 @@ spec:
       allowedRoutes:
         namespaces:
           from: All
-    - name: https
-      port: 443
-      protocol: HTTPS
-      tls:
-        mode: Terminate
-        certificateRefs:
-          - name: wildcard-saj-sh-tls
-            kind: Secret
-      allowedRoutes:
-        namespaces:
-          from: All
