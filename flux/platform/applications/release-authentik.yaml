@@ -1,0 +1,297 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: authentik
+  namespace: flux-system
+spec:
+  interval: 10m
+  timeout: 10m
+  chart:
+    spec:
+      chart: authentik
+      version: "2025.8.0"
+      sourceRef:
+        kind: HelmRepository
+        name: authentik
+  releaseName: authentik
+  targetNamespace: authentik
+  install:
+    createNamespace: true
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  test:
+    enable: true
+  driftDetection:
+    mode: warn
+  valuesFrom:
+    - kind: Secret
+      name: authentik-helm-values
+      valuesKey: values.yaml
+      optional: true
+  values:
+    # Global configuration
+    global:
+      deploymentStrategy:
+        type: RollingUpdate
+        rollingUpdate:
+          maxSurge: 25%
+          maxUnavailable: 25%
+
+      podAnnotations: {}
+      podLabels: {}
+
+      affinity:
+        podAntiAffinity: soft
+        nodeAffinity:
+          type: hard
+          matchExpressions: []
+
+    # Authentik configuration
+    authentik:
+      enabled: true
+      log_level: info
+      # Secret key will be in the separate secrets file
+      secret_key: ""
+
+      events:
+        context_processors:
+          geoip: /geoip/GeoLite2-City.mmdb
+          asn: /geoip/GeoLite2-ASN.mmdb
+
+      web:
+        path: /
+
+      email:
+        host: ""
+        port: 587
+        username: ""
+        password: ""
+        use_tls: false
+        use_ssl: false
+        timeout: 30
+        from: ""
+
+      error_reporting:
+        enabled: false
+        environment: "k8s"
+        send_pii: false
+
+      # PostgreSQL configuration - using built-in
+      postgresql:
+        host: "{{ .Release.Name }}-postgresql"
+        name: "authentik"
+        user: "authentik"
+        password: "" # Will be set in secrets file
+        port: 5432
+
+      # Redis configuration - using built-in
+      redis:
+        host: "{{ .Release.Name }}-redis-master"
+        password: "" # Will be set in secrets file if needed
+
+    # Server configuration
+    server:
+      enabled: true
+      name: server
+      replicas: 1
+
+      autoscaling:
+        enabled: false
+        minReplicas: 1
+        maxReplicas: 5
+        targetCPUUtilizationPercentage: 50
+
+      pdb:
+        enabled: false
+        minAvailable: ""
+        maxUnavailable: ""
+
+      service:
+        type: ClusterIP
+        port: 80
+        targetPort: 9000
+        annotations: {}
+        labels: {}
+
+      metrics:
+        enabled: false
+        service:
+          type: ClusterIP
+          port: 9300
+          targetPort: 9300
+
+      ingress:
+        enabled: false
+        # Configure ingress as needed
+        # className: "nginx"
+        # annotations: {}
+        # hosts:
+        #   - host: authentik.example.com
+        #     paths:
+        #       - path: /
+        #         pathType: Prefix
+        # tls: []
+
+      resources:
+        requests:
+          cpu: 100m
+          memory: 512Mi
+        limits:
+          cpu: 500m
+          memory: 1Gi
+
+      livenessProbe:
+        enabled: true
+        initialDelaySeconds: 60
+        periodSeconds: 30
+        timeoutSeconds: 5
+        failureThreshold: 3
+        successThreshold: 1
+
+      readinessProbe:
+        enabled: true
+        initialDelaySeconds: 30
+        periodSeconds: 10
+        timeoutSeconds: 5
+        failureThreshold: 3
+        successThreshold: 1
+
+      startupProbe:
+        enabled: true
+        initialDelaySeconds: 30
+        periodSeconds: 10
+        timeoutSeconds: 5
+        failureThreshold: 30
+        successThreshold: 1
+
+    # Worker configuration
+    worker:
+      enabled: true
+      name: worker
+      replicas: 1
+
+      autoscaling:
+        enabled: false
+        minReplicas: 1
+        maxReplicas: 5
+        targetCPUUtilizationPercentage: 50
+
+      pdb:
+        enabled: false
+        minAvailable: ""
+        maxUnavailable: ""
+
+      resources:
+        requests:
+          cpu: 100m
+          memory: 512Mi
+        limits:
+          cpu: 500m
+          memory: 1Gi
+
+      livenessProbe:
+        enabled: true
+        initialDelaySeconds: 60
+        periodSeconds: 30
+        timeoutSeconds: 5
+        failureThreshold: 3
+        successThreshold: 1
+
+      readinessProbe:
+        enabled: true
+        initialDelaySeconds: 30
+        periodSeconds: 10
+        timeoutSeconds: 5
+        failureThreshold: 3
+        successThreshold: 1
+
+      startupProbe:
+        enabled: true
+        initialDelaySeconds: 30
+        periodSeconds: 10
+        timeoutSeconds: 5
+        failureThreshold: 30
+        successThreshold: 1
+
+    # Built-in PostgreSQL
+    postgresql:
+      enabled: true
+      auth:
+        username: authentik
+        database: authentik
+        # Password will be set in secrets file
+        password: ""
+        postgresPassword: ""
+
+      primary:
+        persistence:
+          enabled: true
+          size: 8Gi
+          storageClass: "" # Uses default storage class
+
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+
+      metrics:
+        enabled: false
+
+    # Built-in Redis
+    redis:
+      enabled: true
+      auth:
+        enabled: false
+        password: ""
+
+      master:
+        persistence:
+          enabled: true
+          size: 8Gi
+          storageClass: "" # Uses default storage class
+
+        resources:
+          requests:
+            cpu: 50m
+            memory: 128Mi
+          limits:
+            cpu: 250m
+            memory: 256Mi
+
+      replica:
+        replicaCount: 0 # Single node for now
+
+      metrics:
+        enabled: false
+
+    # GeoIP configuration
+    geoip:
+      enabled: false
+      # Configure if you want GeoIP features
+      # accountId: ""
+      # licenseKey: ""
+      # editionId: "GeoLite2-City,GeoLite2-ASN"
+
+    # Service Account
+    serviceAccount:
+      create: true
+      annotations: {}
+      name: ""
+      automountServiceAccountToken: true
+
+    # Prometheus Operator ServiceMonitor
+    serviceMonitor:
+      server:
+        enabled: false
+      worker:
+        enabled: false
+
+    # Prometheus Rules
+    prometheusRule:
+      enabled: false

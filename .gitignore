@@ -44,3 +44,6 @@ override.tf.json
 terraform.rc
 
 cluster-keys.json
+
+# Authentik secrets
+flux/platform/applications/authentik-secrets.yaml
