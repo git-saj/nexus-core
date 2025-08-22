@@ -14,7 +14,7 @@ spec:
         kind: HelmRepository
         name: authentik
   releaseName: authentik
-  targetNamespace: authentik
+  targetNamespace: authentik-system
   install:
     createNamespace: true
     remediation:
