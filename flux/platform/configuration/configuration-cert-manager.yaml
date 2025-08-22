@@ -22,8 +22,8 @@ metadata:
   namespace: istio-system
 spec:
   secretName: wildcard-saj-sh-tls
-  duration: 90d
-  renewBefore: 30d
+  duration: 2160h # 90d
+  renewBefore: 360h # 15d
   dnsNames:
     - saj.sh
     - "*.saj.sh"
