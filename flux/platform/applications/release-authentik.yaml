@@ -61,7 +61,7 @@ spec:
           asn: /geoip/GeoLite2-ASN.mmdb
 
       web:
-        path: /auth
+        path: /auth/
 
       email:
         host: ""
