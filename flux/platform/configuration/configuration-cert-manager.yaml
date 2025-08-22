@@ -1,0 +1,32 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+spec:
+  acme:
+    email: op@saj.sh
+    server: https://acme-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: letsencrypt-prod-account-key
+    solvers:
+      - dns01:
+          cloudflare:
+            apiTokenSecretRef:
+              name: cloudflare-api-token-secret
+              key: api-token
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: wildcard-saj-sh-tls
+  namespace: istio-system
+spec:
+  secretName: wildcard-saj-sh-tls
+  duration: 90d
+  renewBefore: 30d
+  dnsNames:
+    - saj.sh
+    - "*.saj.sh"
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
