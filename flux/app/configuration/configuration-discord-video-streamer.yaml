@@ -1,0 +1,22 @@
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImageRepository
+metadata:
+  name: discord-video-streamer
+  namespace: flux-system
+spec:
+  image: ghcr.io/git-saj/discord-video-streamer
+  interval: 5m0s
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImagePolicy
+metadata:
+  name: discord-video-streamer
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: discord-video-streamer
+  filterTags:
+    pattern: "^latest$"
+  policy:
+    alphabetical:
+      order: asc

@@ -18,3 +18,26 @@ spec:
       backendRefs:
         - name: go-media-control
           port: 8080
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImageRepository
+metadata:
+  name: go-media-control
+  namespace: flux-system
+spec:
+  image: ghcr.io/git-saj/go-media-control
+  interval: 5m0s
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImagePolicy
+metadata:
+  name: go-media-control
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: go-media-control
+  filterTags:
+    pattern: "^latest$"
+  policy:
+    alphabetical:
+      order: asc
