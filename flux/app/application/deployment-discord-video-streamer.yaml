@@ -20,6 +20,9 @@ spec:
             requests:
               cpu: 100m
               memory: 128Mi
+              nvidia.com/gpu: 1
+            limits:
+              nvidia.com/gpu: 1
           volumeMounts:
             - mountPath: /app/config.json
               name: config-volume
