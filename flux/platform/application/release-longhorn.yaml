@@ -3,8 +3,6 @@ kind: HelmRelease
 metadata:
   name: longhorn
   namespace: flux-system
-  annotations:
-    helm.toolkit.fluxcd.io/reuse-values: "true"
 spec:
   interval: 10m
   timeout: 5m
