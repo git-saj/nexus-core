@@ -28,6 +28,13 @@ spec:
               name: config-volume
               subPath: config.json
               readOnly: true
+      nodeSelector:
+        nvidia.com/gpu.present: "true"
+      tolerations:
+        - key: "nvidia.com/gpu"
+          operator: "Exists"
+          effect: "NoSchedule"
+
       volumes:
         - name: config-volume
           secret:
