@@ -1,9 +1,10 @@
-# Istio Base (CRDs and base config)
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: istio-base
   namespace: flux-system
+  annotations:
+    helm.toolkit.fluxcd.io/reuse-values: "true"
 spec:
   interval: 10m
   chart:
@@ -29,6 +30,8 @@ kind: HelmRelease
 metadata:
   name: istio-cni
   namespace: flux-system
+  annotations:
+    helm.toolkit.fluxcd.io/reuse-values: "true"
 spec:
   interval: 10m
   dependsOn:
@@ -49,6 +52,8 @@ kind: HelmRelease
 metadata:
   name: istiod
   namespace: flux-system
+  annotations:
+    helm.toolkit.fluxcd.io/reuse-values: "true"
 spec:
   interval: 10m
   dependsOn:

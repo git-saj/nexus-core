@@ -5,6 +5,7 @@ resources:
   - _base/helm
   - namespace.yaml
   - kustomization-gateway-api.yaml
+  - release-istio.yaml
   - release-metallb.yaml
   - release-cnpg.yaml
   - release-cert-manager.yaml
