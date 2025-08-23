@@ -14,7 +14,7 @@ spec:
         pod: discord-video-streamer
     spec:
       containers:
-        - image: ghcr.io/git-saj/discord-video-streamer:latest # {"$imagepolicy": "flux-system:discord-video-streamer"}
+        - image: ghcr.io/git-saj/discord-video-streamer:latest@sha256:70271b69d521abec327ea955154cc83e073bf9b631e33ce868e79ee01bb88845 # {"$imagepolicy": "flux-system:discord-video-streamer"}
           name: discord-video-streamer
           resources:
             requests:
