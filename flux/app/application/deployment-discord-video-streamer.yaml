@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: discord-video-streamer
-  namespace: discord-video-streamer-system
+  namespace: discord-video-streamer-app
 spec:
   replicas: 1
   selector:
