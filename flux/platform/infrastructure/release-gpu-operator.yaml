@@ -40,6 +40,7 @@ spec:
     devicePlugin:
       config:
         name: device-plugin-config
+        default: "config.yaml"
         data:
           config.yaml: |
             sharing:
