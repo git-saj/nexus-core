@@ -8,3 +8,14 @@ spec:
   url: https://github.com/kubernetes-sigs/gateway-api
   ref:
     tag: v1.3.0
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: nvidia-k8s-device-plugin
+  namespace: flux-system
+spec:
+  interval: 1h
+  url: https://github.com/NVIDIA/k8s-device-plugin
+  ref:
+    tag: v0.17.1

@@ -5,6 +5,7 @@ resources:
   - _base/helm
   - namespace.yaml
   - kustomization-gateway-api.yaml
+  - kustomization-nvidia-device-plugin.yaml
   - release-istio.yaml
   - release-metallb.yaml
   - release-cert-manager.yaml
