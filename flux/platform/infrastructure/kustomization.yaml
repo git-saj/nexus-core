@@ -5,7 +5,7 @@ resources:
   - _base/helm
   - namespace.yaml
   - kustomization-gateway-api.yaml
-  - kustomization-nvidia-device-plugin.yaml
   - release-istio.yaml
   - release-metallb.yaml
   - release-cert-manager.yaml
+  - https://raw.githubusercontent.com/NVIDIA/k8s-device-plugin/v0.17.1/deployments/static/nvidia-device-plugin.yml
