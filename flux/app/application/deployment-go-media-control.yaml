@@ -14,7 +14,7 @@ spec:
         pod: go-media-control
     spec:
       containers:
-        - image: ghcr.io/git-saj/go-media-control:sha-cb18460 # {"$imagepolicy": "flux-system:go-media-control:tag"}
+        - image: latest # {"$imagepolicy": "flux-system:go-media-control:tag"}
           name: go-media-control
           envFrom:
             - secretRef:
