@@ -5,4 +5,4 @@ resources:
   - configuration-cert-manager.yaml
   - configuration-gateway-api.yaml
   - configuration-authentik.yaml
-  - configuration-flux.yaml
+  - configuration-fluxcd.yaml
