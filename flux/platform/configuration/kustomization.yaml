@@ -6,4 +6,3 @@ resources:
   - configuration-gateway-api.yaml
   - configuration-authentik.yaml
   - configuration-fluxcd.yaml
-  - configuration-nvidia.yaml
