@@ -14,7 +14,7 @@ spec:
     - matches:
         - path:
             type: PathPrefix
-            value: /auth/
+            value: /
       backendRefs:
         - name: authentik-server
           port: 80

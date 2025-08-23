@@ -14,7 +14,7 @@ spec:
     - matches:
         - path:
             type: PathPrefix
-            value: /media/
+            value: /tv/
       backendRefs:
         - name: go-media-control
           port: 8080
