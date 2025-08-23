@@ -42,3 +42,4 @@ spec:
     alphabetical:
       order: asc
   digestReflectionPolicy: Always
+  interval: 5m0s
