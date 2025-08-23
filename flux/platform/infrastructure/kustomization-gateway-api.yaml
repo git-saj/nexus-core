@@ -1,7 +1,7 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: gateway-api-crds
+  name: platform-gateway-api-crds
   namespace: flux-system
 spec:
   interval: 10m
