@@ -35,7 +35,7 @@ spec:
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: platform-applications
+  name: platform-application
   namespace: flux-system
 spec:
   interval: 5m
@@ -44,7 +44,7 @@ spec:
   sourceRef:
     kind: GitRepository
     name: flux-system
-  path: ./flux/platform/applications
+  path: ./flux/platform/application
   dependsOn:
     - name: platform-configuration
   prune: true
