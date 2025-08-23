@@ -41,3 +41,4 @@ spec:
   policy:
     alphabetical:
       order: asc
+  digestReflectionPolicy: Always
