@@ -8,4 +8,4 @@ resources:
   - release-istio.yaml
   - release-metallb.yaml
   - release-cert-manager.yaml
-  - https://raw.githubusercontent.com/NVIDIA/k8s-device-plugin/v0.17.1/deployments/static/nvidia-device-plugin.yml
+  - release-gpu-operator.yaml
