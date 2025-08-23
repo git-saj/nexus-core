@@ -39,13 +39,13 @@ spec:
           value: "true"
     devicePlugin:
       config:
-        name: device-plugin-config
-        default: "config.yaml"
+        name: time-slicing-config-all
+        create: true
         data:
-          config.yaml: |
+          time-slicing-config-all: |
+            version: v1
             sharing:
               timeSlicing:
                 resources:
                 - name: nvidia.com/gpu
                   replicas: 4
-                failRequestsGreaterThanOne: false
