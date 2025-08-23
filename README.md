@@ -7,4 +7,5 @@ flux bootstrap github \
   --repository=nexus-core \
   --branch=main \
   --path=flux/clusters/nexus \
+  --read-write-key \
   --personal

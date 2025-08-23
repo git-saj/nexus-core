@@ -106,7 +106,7 @@
           k6
           jq
           gh
-          fluxcd
+          unstable.fluxcd
           tree
           wget
           # Other useful tools for your NixOS configuration

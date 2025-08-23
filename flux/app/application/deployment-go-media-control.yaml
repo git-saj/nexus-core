@@ -14,7 +14,7 @@ spec:
         pod: go-media-control
     spec:
       containers:
-        - image: latest # {"$imagepolicy": "flux-system:go-media-control:tag"}
+        - image: ghcr.io/nexus-core/go-media-control:latest # {"$imagepolicy": "flux-system:go-media-control:digest"}
           name: go-media-control
           envFrom:
             - secretRef:
