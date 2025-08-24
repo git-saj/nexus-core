@@ -5,6 +5,8 @@ metadata:
   namespace: discord-video-streamer-app
 spec:
   replicas: 1
+  strategy:
+    type: Recreate # Use Recreate to avoid multiple instances
   selector:
     matchLabels:
       pod: discord-video-streamer
@@ -14,39 +16,172 @@ spec:
         pod: discord-video-streamer
     spec:
       runtimeClassName: nvidia
+      serviceAccountName: discord-video-streamer
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        runAsGroup: 1001
+        fsGroup: 1001
       containers:
-        - image: ghcr.io/git-saj/discord-video-streamer:latest@sha256:0c88a64b1f7bec505db445ad552d27f15d2e8da0c7a6367a74891e892ef22026 # {"$imagepolicy": "flux-system:discord-video-streamer"}
-          name: discord-video-streamer
+        - name: discord-video-streamer
+          image: ghcr.io/git-saj/discord-video-streamer:latest@sha256:0c88a64b1f7bec505db445ad552d27f15d2e8da0c7a6367a74891e892ef22026 # {"$imagepolicy": "flux-system:discord-video-streamer"}
+
+          ports:
+            - name: health
+              containerPort: 8080
+              protocol: TCP
+
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+              nvidia.com/gpu: 1
+            limits:
+              memory: "4Gi"
+              cpu: "4000m"
+              nvidia.com/gpu: 1
+
           env:
+            # Node.js configuration for health
+            - name: NODE_ENV
+              value: "production"
+            - name: NODE_OPTIONS
+              value: "--max-old-space-size=1024 --expose-gc"
+
+            # Log level
+            - name: LOG_LEVEL
+              value: "info"
+
+            # GPU configuration
             - name: NVIDIA_VISIBLE_DEVICES
               value: "all"
             - name: NVIDIA_DRIVER_CAPABILITIES
               value: "compute,utility,video"
-          resources:
-            requests:
-              cpu: 100m
-              memory: 128Mi
-              nvidia.com/gpu: 1
-            limits:
-              cpu: "2"
-              memory: 2Gi
-              nvidia.com/gpu: 1
+
+          # Kubernetes Health Probes
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: health
+              scheme: HTTP
+            initialDelaySeconds: 60 # Wait 60s after container start
+            periodSeconds: 30 # Check every 30s
+            timeoutSeconds: 10 # Timeout after 10s
+            successThreshold: 1 # Must succeed 1 time to be considered alive
+            failureThreshold: 3 # Must fail 3 times to restart container
+
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: health
+              scheme: HTTP
+            initialDelaySeconds: 30 # Wait 30s after container start
+            periodSeconds: 10 # Check every 10s
+            timeoutSeconds: 5 # Timeout after 5s
+            successThreshold: 1 # Must succeed 1 time to be ready
+            failureThreshold: 3 # Must fail 3 times to be not ready
+
+          startupProbe:
+            httpGet:
+              path: /health/startup
+              port: health
+              scheme: HTTP
+            initialDelaySeconds: 10 # Wait 10s after container start
+            periodSeconds: 5 # Check every 5s during startup
+            timeoutSeconds: 3 # Timeout after 3s
+            successThreshold: 1 # Must succeed 1 time to be started
+            failureThreshold: 12 # Allow up to 1 minute for startup (12 * 5s)
+
           volumeMounts:
-            - mountPath: /app/config.json
-              name: config-volume
+            - name: config
+              mountPath: /app/config.json
               subPath: config.json
               readOnly: true
+            - name: logs
+              mountPath: /app/logs
+            - name: tmp
+              mountPath: /tmp
+
+          # Security context
           securityContext:
             allowPrivilegeEscalation: false
-            runAsNonRoot: true
-            runAsUser: 1001
-            runAsGroup: 1001
+            readOnlyRootFilesystem: true
             capabilities:
               drop:
                 - ALL
+
+      volumes:
+        - name: config
+          configMap:
+            name: discord-video-streamer-config
+        - name: logs
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}
+
       nodeSelector:
         nvidia.com/gpu.present: "true"
-      volumes:
-        - name: config-volume
-          secret:
-            secretName: discord-video-streamer-config
+
+        # Restart policy
+      restartPolicy: Always
+
+      # DNS policy
+      dnsPolicy: ClusterFirst
+
+      # Grace period for shutdown
+      terminationGracePeriodSeconds: 30
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: discord-video-streamer-health
+  namespace: discord-video-streamer-app
+  labels:
+    app: discord-video-streamer
+    service: health
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: health
+      protocol: TCP
+      name: health
+  selector:
+    app: discord-video-streamer
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: discord-video-streamer
+  namespace: discord-video-streamer-app
+  labels:
+    app: discord-video-streamer
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: discord-video-streamer
+  namespace: discord-video-streamer-app
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list"]
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["create"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: discord-video-streamer
+  namespace: discord-video-streamer-app
+subjects:
+  - kind: ServiceAccount
+    name: discord-video-streamer
+roleRef:
+  kind: Role
+  name: discord-video-streamer
+  apiGroup: rbac.authorization.k8s.io
