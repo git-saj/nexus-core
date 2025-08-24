@@ -5,8 +5,6 @@ metadata:
   namespace: discord-video-streamer-app
 spec:
   replicas: 1
-  strategy:
-    type: Recreate # Use Recreate to avoid multiple instances
   selector:
     matchLabels:
       pod: discord-video-streamer
