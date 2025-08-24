@@ -22,7 +22,7 @@ spec:
         fsGroup: 1001
       containers:
         - name: discord-video-streamer
-          image: ghcr.io/git-saj/discord-video-streamer:latest@sha256:00321621bde95a038b29ce75a77b199c654f14b9efac358e83742f61cba3799c # {"$imagepolicy": "flux-system:discord-video-streamer"}
+          image: ghcr.io/git-saj/discord-video-streamer:latest@sha256:265ea8f5810eb918ba745a2d1a5ff08e716f446312ceeae3263ac54723588b25 # {"$imagepolicy": "flux-system:discord-video-streamer"}
           ports:
             - name: health
               containerPort: 8080
