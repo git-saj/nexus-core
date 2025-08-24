@@ -22,13 +22,11 @@ spec:
         fsGroup: 1001
       containers:
         - name: discord-video-streamer
-          image: ghcr.io/git-saj/discord-video-streamer:latest@sha256:0c88a64b1f7bec505db445ad552d27f15d2e8da0c7a6367a74891e892ef22026 # {"$imagepolicy": "flux-system:discord-video-streamer"}
-
+          image: ghcr.io/git-saj/discord-video-streamer:latest@sha256:00321621bde95a038b29ce75a77b199c654f14b9efac358e83742f61cba3799c # {"$imagepolicy": "flux-system:discord-video-streamer"}
           ports:
             - name: health
               containerPort: 8080
               protocol: TCP
-
           resources:
             requests:
               memory: "512Mi"
@@ -38,24 +36,20 @@ spec:
               memory: "4Gi"
               cpu: "4000m"
               nvidia.com/gpu: 1
-
           env:
             # Node.js configuration for health
             - name: NODE_ENV
               value: "production"
             - name: NODE_OPTIONS
               value: "--max-old-space-size=1024 --expose-gc"
-
             # Log level
             - name: LOG_LEVEL
               value: "info"
-
             # GPU configuration
             - name: NVIDIA_VISIBLE_DEVICES
               value: "all"
             - name: NVIDIA_DRIVER_CAPABILITIES
               value: "compute,utility,video"
-
           # Kubernetes Health Probes
           livenessProbe:
             httpGet:
@@ -67,7 +61,6 @@ spec:
             timeoutSeconds: 10 # Timeout after 10s
             successThreshold: 1 # Must succeed 1 time to be considered alive
             failureThreshold: 3 # Must fail 3 times to restart container
-
           readinessProbe:
             httpGet:
               path: /health/ready
@@ -78,7 +71,6 @@ spec:
             timeoutSeconds: 5 # Timeout after 5s
             successThreshold: 1 # Must succeed 1 time to be ready
             failureThreshold: 3 # Must fail 3 times to be not ready
-
           startupProbe:
             httpGet:
               path: /health/startup
@@ -89,7 +81,6 @@ spec:
             timeoutSeconds: 3 # Timeout after 3s
             successThreshold: 1 # Must succeed 1 time to be started
             failureThreshold: 12 # Allow up to 1 minute for startup (12 * 5s)
-
           volumeMounts:
             - name: config
               mountPath: /app/config.json
@@ -99,7 +90,6 @@ spec:
               mountPath: /app/logs
             - name: tmp
               mountPath: /tmp
-
           # Security context
           securityContext:
             allowPrivilegeEscalation: false
@@ -107,7 +97,6 @@ spec:
             capabilities:
               drop:
                 - ALL
-
       volumes:
         - name: config
           configMap:
@@ -116,16 +105,12 @@ spec:
           emptyDir: {}
         - name: tmp
           emptyDir: {}
-
       nodeSelector:
         nvidia.com/gpu.present: "true"
-
         # Restart policy
       restartPolicy: Always
-
       # DNS policy
       dnsPolicy: ClusterFirst
-
       # Grace period for shutdown
       terminationGracePeriodSeconds: 30
 ---
@@ -146,7 +131,6 @@ spec:
       name: health
   selector:
     app: discord-video-streamer
-
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -155,7 +139,6 @@ metadata:
   namespace: discord-video-streamer-app
   labels:
     app: discord-video-streamer
-
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -169,7 +152,6 @@ rules:
   - apiGroups: [""]
     resources: ["events"]
     verbs: ["create"]
-
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
