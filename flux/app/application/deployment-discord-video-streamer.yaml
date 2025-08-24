@@ -99,8 +99,8 @@ spec:
                 - ALL
       volumes:
         - name: config
-          configMap:
-            name: discord-video-streamer-config
+          secret:
+            secretName: discord-video-streamer-config
         - name: logs
           emptyDir: {}
         - name: tmp
