@@ -13,21 +13,37 @@ spec:
       labels:
         pod: discord-video-streamer
     spec:
+      runtimeClassName: nvidia
       containers:
         - image: ghcr.io/git-saj/discord-video-streamer:latest@sha256:0c88a64b1f7bec505db445ad552d27f15d2e8da0c7a6367a74891e892ef22026 # {"$imagepolicy": "flux-system:discord-video-streamer"}
           name: discord-video-streamer
+          env:
+            - name: NVIDIA_VISIBLE_DEVICES
+              value: "all"
+            - name: NVIDIA_DRIVER_CAPABILITIES
+              value: "compute,utility,video"
           resources:
             requests:
               cpu: 100m
               memory: 128Mi
               nvidia.com/gpu: 1
             limits:
+              cpu: "2"
+              memory: 2Gi
               nvidia.com/gpu: 1
           volumeMounts:
             - mountPath: /app/config.json
               name: config-volume
               subPath: config.json
               readOnly: true
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            runAsUser: 1001
+            runAsGroup: 1001
+            capabilities:
+              drop:
+                - ALL
       nodeSelector:
         nvidia.com/gpu.present: "true"
       volumes:
